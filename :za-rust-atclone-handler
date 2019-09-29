@@ -1,0 +1,120 @@
+# Copyright (c) 2019 Sebastian Gniazdowski
+# License MIT
+
+emulate -RL zsh
+setopt extendedglob warncreateglobal typesetsilent noshortloops
+
+[[ "$1" = plugin ]] && \
+    local type="$1" user="$2" plugin="$3" id_as="$4" dir="$5" hook="$6" || \
+    local type="$1" url="$2" id_as="$3" dir="$4" hook="$5"
+
+local nl=$'\n'
+
+# FUNCTION: .z-a-rust-download-file-stdout {{{
+# Downloads file to stdout. Supports following backend commands:
+# curl, wget, lftp, lynx. Used by snippet loading.
+.z-a-rust-download-file-stdout() {
+    local url="$1" restart="$2"
+
+    setopt localoptions localtraps
+
+    if (( restart )); then
+        (( ${path[(I)/usr/local/bin]} )) || \
+            { 
+                path+=( "/usr/local/bin" );
+                trap "path[-1]=()" EXIT
+            }
+    
+        if (( ${+commands[curl]} )) then
+            command curl -fsSL "$url" || return 1
+        elif (( ${+commands[wget]} )); then
+            command wget -q "$url" -O - || return 1
+        elif (( ${+commands[lftp]} )); then
+            command lftp -c "cat $url" || return 1
+        elif (( ${+commands[lynx]} )) then
+            command lynx -source "$url" || return 1
+        else
+            return 2
+        fi
+    else
+        if type curl 2>/dev/null 1>&2; then
+            command curl -fsSL "$url" || return 1
+        elif type wget 2>/dev/null 1>&2; then
+            command wget -q "$url" -O - || return 1
+        elif type lftp 2>/dev/null 1>&2; then
+            command lftp -c "cat $url" || return 1
+        else
+            .z-a-rust-download-file-stdout "$url" "1"
+            return $?
+        fi
+    fi
+
+    return 0
+} # }}}
+
+if (( ${+ZPLG_ICE[rustup]} )) {
+    (
+        builtin cd -q "$dir" || {
+            print -P -- "%F{38}rust annex: %F{160}An internal error, please report at: %F{220}https://github.com/zplugin/z-a-rust/issues%F{160}%f"
+            return 1
+        }
+        command mkdir -p bin rustup
+        .z-a-rust-download-file-stdout 'https://sh.rustup.rs' 0 >! bin/rustup-init || \
+        {
+            .z-a-rust-download-file-stdout 'https://sh.rustup.rs' 1 >! bin/rustup-init || \
+            {
+                print -P -- "%F{38}rust annex: %F{160}Couldn't download the %F{220}rustup.rs%F{160} installer%f"
+                return 0
+            }
+        }
+        command chmod +x bin/rustup-init
+        local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" 
+        print -P -- "%F{38}rust annex: %F{154}Running the rustup installer...%f"
+        bin/rustup-init -y --no-modify-path
+    ) || \
+        return 0
+}
+
+if [[ -n "${ZPLG_ICE[cargo]}" ]] {
+    local -a cargo_defs srcdst tmpsdst cargos
+    cargo_defs=( "${(s.;.)ZPLG_ICE[cargo]}" )
+
+    local cargo
+
+    for cargo ( $cargo_defs ) {
+        srcdst=( ${(@s.->.)cargo} )
+        tmpsdst=( ${(@s.<-.)srcdst[1]} )
+        if (( ${#tmpsdst} > 1 )); then
+            srcdst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${srcdst[2]:-${srcdst[1]#\!}}" )
+        else
+            srcdst=( "${tmpsdst[1]#\!}" "${tmpsdst[1]}" "${srcdst[2]:-${srcdst[1]#\!}}" )
+        fi
+        srcdst=( "${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+        srcdst[2]=${srcdst[2]#\!}
+
+        cargos+=( ${srcdst[2]} )
+    }
+
+    local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
+    (( ${#cargos} )) && {
+        if [[ "$hook" = *atclone ]]; then
+            command $dir/bin/cargo install --force --root "$dir" "${cargos[@]}"
+        elif [[ "$hook" = *atpull ]]; then
+            print FSCK
+            local toml_dir
+            local -a tomls
+            tomls=( **/Cargo.toml(N.) )
+            for toml_dir ( ${tomls:h} ) {
+                (
+                    builtin cd -q "$toml_dir" && {
+                        command $dir/bin/cargo update
+                        command $dir/bin/cargo build
+                    }
+                )
+            }
+        fi
+    }
+}
+
+
+# vim:ft=zsh:sw=4:sts=4:et
