@@ -4,6 +4,11 @@
 emulate -RL zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops
 
+local -a entry_funs
+entry_funs=( ${(k)functions} )
+trap "unset -f \"\${(k)functions[@]:#(${(j:|:)${(q@)entry_funs}})}\" &>/dev/null" EXIT
+trap "unset -f \"\${(k)functions[@]:#(${(j:|:)${(q@)entry_funs}})}\" &>/dev/null; return 1" INT
+
 [[ "$1" = plugin ]] && \
     local type="$1" user="$2" plugin="$3" id_as="$4" dir="$5" hook="$6" || \
     local type="$1" url="$2" id_as="$3" dir="$4" hook="$5"
