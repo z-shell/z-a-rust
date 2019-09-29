@@ -105,10 +105,9 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
         if [[ "$hook" = *atclone ]]; then
             command $dir/bin/cargo install --force --root "$dir" "${cargos[@]}"
         elif [[ "$hook" = *atpull ]]; then
-            print FSCK
             local toml_dir
             local -a tomls
-            tomls=( **/Cargo.toml(N.) )
+            tomls=( "$dir"/**/Cargo.toml(N.) )
             for toml_dir ( ${tomls:h} ) {
                 (
                     builtin cd -q "$toml_dir" && {
