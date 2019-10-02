@@ -152,7 +152,6 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
             [[ ${bin_pkg_dst[2]} = [gncNEO]#O[gncNEO]#:* ]] && use_out_null=1
             bin_pkg_dst[2]=${bin_pkg_dst[1]#[a-zA-Z]#:}
         else
-            print -r Continuing for ${bin_pkg_dst[2]} / $bin_pkg_dst
             continue
         fi
 
@@ -160,14 +159,6 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
         local target_binary="${${(M)bin_pkg_dst[1]:#/*}:-$dir/bin/${bin_pkg_dst[1]}}" \
             fnam="${bin_pkg_dst[3]:-${bin_pkg_dst[1]:t}}"
         local file="$ZPFX/bin/$fnam"
-
-        print -r Target binary $target_binary
-
-        print -r .za-rust-bin-or-src-function-body 0 \
-                    "$fnam" "$target_binary" "$dir" \
-                    "${${(M)set_rust_home_vars:#1}:-${+ZPLG_ICE[rustup]}}" \
-                    "$set_gem_home" "$set_node_path" "$set_cwd" \
-                    "$use_all_null" "$use_err_null" "$use_out_null"
 
         .za-rust-bin-or-src-function-body 0 \
                     "$fnam" "$target_binary" "$dir" \
