@@ -9,7 +9,6 @@
 0="${${(M)0:#/*}:-$PWD/$0}"
 
 autoload .za-rust-bin-or-src-function-body \
-    .za-rust-mod-function-body \
     :za-rust-atload-handler :za-rust-atclone-handler \
     :za-rust-atpull-handler :za-rust-help-handler \
     :za-rust-atdelete-handler
