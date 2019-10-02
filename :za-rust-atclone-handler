@@ -75,29 +75,29 @@ if (( ${+ZPLG_ICE[rustup]} )) {
         command chmod +x bin/rustup-init
         local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" 
         print -P -- "%F{38}rust annex: %F{154}Running the rustup installer...%f"
-        bin/rustup-init -y --no-modify-path
+        bin/rustup-init -y --no-modify-path |& command egrep '(installing|installed)'
     ) || \
         return 0
 }
 
 if [[ -n "${ZPLG_ICE[cargo]}" ]] {
-    local -a cargo_defs srcdst tmpsdst cargos
+    local -a cargo_defs bin_pkg_dst tmpsdst cargos
     cargo_defs=( "${(s.;.)ZPLG_ICE[cargo]}" )
 
     local cargo
 
     for cargo ( $cargo_defs ) {
-        srcdst=( ${(@s.->.)cargo} )
-        tmpsdst=( ${(@s.<-.)srcdst[1]} )
+        bin_pkg_dst=( ${(@s.->.)cargo} )
+        tmpsdst=( ${(@s.<-.)bin_pkg_dst[1]} )
         if (( ${#tmpsdst} > 1 )); then
-            srcdst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${srcdst[2]:-${srcdst[1]#\!}}" )
+            bin_pkg_dst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
         else
-            srcdst=( "${tmpsdst[1]#\!}" "${tmpsdst[1]}" "${srcdst[2]:-${srcdst[1]#\!}}" )
+            bin_pkg_dst=( "${tmpsdst[1]#\!}" "${tmpsdst[1]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
         fi
-        srcdst=( "${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
-        srcdst[2]=${srcdst[2]#\!}
+        bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+        bin_pkg_dst[2]=${bin_pkg_dst[2]#\!}
 
-        cargos+=( ${srcdst[2]} )
+        cargos+=( ${bin_pkg_dst[2]} )
     }
 
     local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
@@ -120,5 +120,70 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
     }
 }
 
+if [[ -n "${ZPLG_ICE[cargo]}" ]] {
+    local -a cargos bin_pkg_dst
+    cargos=( "${(s.;.)ZPLG_ICE[cargo]}" )
 
+    local cargo
+
+    for cargo ( $cargos ) {
+        integer set_rust_home_vars=0 \
+                set_gem_home=0 set_node_path=0 set_cwd=0 \
+                use_all_null=0 use_err_null=0 use_out_null=0
+
+        bin_pkg_dst=( ${(@s.->.)cargo} )
+        bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+        tmpsdst=( ${(@s.<-.)bin_pkg_dst[1]} )
+        tmpsdst=( "${tmpsdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+        if (( ${#tmpsdst} > 1 )); then
+            bin_pkg_dst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
+        else
+            bin_pkg_dst=( "${tmpsdst[1]#\!}" "${tmpsdst[1]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
+        fi
+        bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+        if [[ ${bin_pkg_dst[2]} = \!* ]]; then
+            bin_pkg_dst[2]=${bin_pkg_dst[2]#\!}
+            [[ ${bin_pkg_dst[2]} = [gncNEO]#R[gncNEO]#:* ]] && set_rust_home_vars=1
+            [[ ${bin_pkg_dst[2]} = [gncNEO]#g[gncNEO]#:* ]] && set_gem_home=1
+            [[ ${bin_pkg_dst[2]} = [gncNEO]#n[gncNEO]#:* ]] && set_node_path=1
+            [[ ${bin_pkg_dst[2]} = [gncNEO]#c[gncNEO]#:* ]] && set_cwd=1
+            [[ ${bin_pkg_dst[2]} = [gncNEO]#N[gncNEO]#:* ]] && use_all_null=1
+            [[ ${bin_pkg_dst[2]} = [gncNEO]#E[gncNEO]#:* ]] && use_err_null=1
+            [[ ${bin_pkg_dst[2]} = [gncNEO]#O[gncNEO]#:* ]] && use_out_null=1
+            bin_pkg_dst[2]=${bin_pkg_dst[1]#[a-zA-Z]#:}
+        else
+            print -r Continuing for ${bin_pkg_dst[2]} / $bin_pkg_dst
+            continue
+        fi
+
+
+        local target_binary="${${(M)bin_pkg_dst[1]:#/*}:-$dir/bin/${bin_pkg_dst[1]}}" \
+            fnam="${bin_pkg_dst[3]:-${bin_pkg_dst[1]:t}}"
+        local file="$ZPFX/bin/$fnam"
+
+        print -r Target binary $target_binary
+
+        print -r .za-rust-bin-or-src-function-body 0 \
+                    "$fnam" "$target_binary" "$dir" \
+                    "${${(M)set_rust_home_vars:#1}:-${+ZPLG_ICE[rustup]}}" \
+                    "$set_gem_home" "$set_node_path" "$set_cwd" \
+                    "$use_all_null" "$use_err_null" "$use_out_null"
+
+        .za-rust-bin-or-src-function-body 0 \
+                    "$fnam" "$target_binary" "$dir" \
+                    "${${(M)set_rust_home_vars:#1}:-${+ZPLG_ICE[rustup]}}" \
+                    "$set_gem_home" "$set_node_path" "$set_cwd" \
+                    "$use_all_null" "$use_err_null" "$use_out_null"
+
+        builtin print -r -- "#!/usr/bin/env zsh$nl$nl$REPLY$nl$nl$fnam \"\$@\"" \
+            >! "$file"
+        command chmod +x "$file"
+
+        if [[ -x $file ]]; then
+            print -P -- "%F{38}rust annex: %F{154}${${hook:#*atclone}:+Re-}Created the %F{220}$fnam%F{154} shim%f"
+        else
+            print -P -- "%F{38}rust annex: %F{160}Something went wrong creating the %F{220}$fnam%F{160} shim%f"
+        fi
+    }
+}
 # vim:ft=zsh:sw=4:sts=4:et
