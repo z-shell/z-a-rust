@@ -57,7 +57,7 @@ local nl=$'\n'
     return 0
 } # }}}
 
-if (( ${+ZPLG_ICE[rustup]} )) {
+if [[ -n ${ZPLG_ICE[rustup]} ]] {
     (
         builtin cd -q "$dir" || {
             print -P -- "%F{38}rust annex: %F{160}An internal error, please report at: %F{220}https://github.com/zplugin/z-a-rust/issues%F{160}%f"
