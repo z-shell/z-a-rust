@@ -20,7 +20,7 @@ autoload .za-rust-bin-or-src-function-body \
     hook:atload \
     :za-rust-atload-handler \
     :za-rust-help-handler \
-    "rustup''|cargo''" # also register new ices
+    "rustup|cargo''" # also register new ices
 
 @zplg-register-annex "z-a-rust" \
     hook:atclone \
