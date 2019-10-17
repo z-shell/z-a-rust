@@ -96,6 +96,9 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
         fi
         bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
         bin_pkg_dst[2]=${bin_pkg_dst[2]#\!}
+        bin_pkg_dst[1]=${bin_pkg_dst[1]##[a-zA-Z]##:}
+        bin_pkg_dst[2]=${bin_pkg_dst[2]##[a-zA-Z]##:}
+        bin_pkg_dst[3]=${bin_pkg_dst[3]##[a-zA-Z]##:}
 
         cargos+=( ${bin_pkg_dst[2]} )
     }
@@ -150,7 +153,9 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
             [[ ${bin_pkg_dst[2]} = [gncNEO]#N[gncNEO]#:* ]] && use_all_null=1
             [[ ${bin_pkg_dst[2]} = [gncNEO]#E[gncNEO]#:* ]] && use_err_null=1
             [[ ${bin_pkg_dst[2]} = [gncNEO]#O[gncNEO]#:* ]] && use_out_null=1
-            bin_pkg_dst[2]=${bin_pkg_dst[1]#[a-zA-Z]#:}
+            bin_pkg_dst[1]=${bin_pkg_dst[1]##[a-zA-Z]##:}
+            bin_pkg_dst[2]=${bin_pkg_dst[2]##[a-zA-Z]##:}
+            bin_pkg_dst[3]=${bin_pkg_dst[3]##[a-zA-Z]##:}
         else
             continue
         fi
