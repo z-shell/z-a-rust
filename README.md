@@ -57,9 +57,9 @@ zplugin load zdharma/null
 zplugin ice rustup cargo'!E:exa'
 zplugin load zdharma/null
 
-# Just install rust and make it available globally
+# Just install rust and make it available globally in the system
 zplugin ice id-as"rust" wait"0" lucid rustup as"command" \
-            pick"bin/rustc" atload="export CARGO_HOME=\$PWD"
+            pick"bin/rustc" atload="export RUSTUP_HOME=\$PWD/rustup"
 zplugin load zdharma/null
 ```
 
