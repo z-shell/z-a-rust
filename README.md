@@ -85,4 +85,9 @@ zplugin light zplugin/z-a-rust
 
 This installs the annex and makes the `rustup` and `cargo''` ices available.
 
+# Example
+
+![example z-a-rust
+use](https://raw.githubusercontent.com/zplugin/z-a-rust/master/images/z-a-rust.png)
+
 <!-- vim:set ft=markdown tw=80 fo+=an1 autoindent: -->
