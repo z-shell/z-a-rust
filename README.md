@@ -24,17 +24,17 @@ As it can be seen shim ultimately provides the binary to the command line.
 
 ## Usage
 
-The Zplugin annex provides two new ices: `rustup''` and `cargo''`. The first one
+The Zplugin annex provides two new ices: `rustup` and `cargo''`. The first one
 installs rust inside the plugin's folder using the official `rustup` installer.
 The second one has the following syntax:
 
-`cargo"[name-of-the-binary-or-path <-] [[c|N|E|O]:][!]{crate-name} [-> {shim-script-name}]'`
+`cargo"[name-of-the-binary-or-path <-] [[!][c|N|E|O]:]{crate-name} [-> {shim-script-name}]'`
 
 Example uses are:
 
 ```zsh
-# Installs rust and then the `lsd' crate and
-# creates the `lsd' shim exposing the binary
+# Installs rust and then the `lsd' crate and creates
+# the `lsd' shim exposing the binary
 zplugin ice rustup cargo'!lsd'
 zplugin load zdharma/null
 
@@ -45,6 +45,11 @@ zplugin load zdharma/null
 
 # Installs rust and then the `exa' and `lsd' crates
 zplugin ice rustup cargo'exa;lsd'
+zplugin load zdharma/null
+
+# Installs rust and then the `exa' and `lsd' crates
+# and exposes their binaries by altering $PATH
+zplugin ice rustup cargo'exa;lsd' as"command" pick"bin/(exa|lsd)"
 zplugin load zdharma/null
 
 # Installs rust and then the `exa' crate and creates
@@ -62,7 +67,17 @@ Flags meanings:
   executing the command
 
 As the examples showed, the name of the binary to run and the shim name are
-equal to the name of the crate by default. Specifying `{binary-name} <- …`
+by default equal to the name of the crate. Specifying `{binary-name} <- …`
 and/or `… -> {shim-name}` allows to override them.
+
+## Installation
+
+Simply load like a regular plugin, i.e.:
+
+```zsh
+zplugin light zplugin/z-a-rust
+```
+
+This installs the annex and makes the `rustup` and `cargo''` ices available.
 
 <!-- vim:set ft=markdown tw=80 fo+=an1 autoindent: -->
