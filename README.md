@@ -56,6 +56,11 @@ zplugin load zdharma/null
 # its shim with standard error redirected to /dev/null
 zplugin ice rustup cargo'!E:exa'
 zplugin load zdharma/null
+
+# Just install rust and make it available globally
+zplugin ice id-as"rust" wait"0" lucid rustup as"command" \
+            pick"bin/rustc" atload="export CARGO_HOME=\$PWD"
+zplugin load zdharma/null
 ```
 
 Flags meanings:
