@@ -1,0 +1,54 @@
+# Copyright (c) 2019 Sebastian Gniazdowski
+# License MIT
+
+emulate -RL zsh
+setopt extendedglob warncreateglobal typesetsilent noshortloops
+
+[[ "$1" = plugin ]] && \
+    local type="$1" user="$2" plugin="$3" id_as="$4" dir="$5" hook="$6" || \
+    local type="$1" url="$2" id_as="$3" dir="$4" hook="$5"
+
+local nl=$'\n'
+
+if [[ -n "${ZPLG_ICE[cargo]}" ]] {
+    local -a cargos bin_pkg_dst
+    cargos=( "${(s.;.)ZPLG_ICE[cargo]}" )
+
+    local cargo
+
+    for cargo ( $cargos ) {
+        bin_pkg_dst=( ${(@s.->.)cargo} )
+        bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+        tmpsdst=( ${(@s.<-.)bin_pkg_dst[1]} )
+        tmpsdst=( "${tmpsdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+        if (( ${#tmpsdst} > 1 )); then
+            bin_pkg_dst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${bin_pkg_dst[2]:-${tmpdist[2]#\!}}" )
+        else
+            bin_pkg_dst=( "${tmpsdst[1]#\!}" "${tmpsdst[1]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
+        fi
+        bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+        if [[ ${bin_pkg_dst[2]} = \!* ]]; then
+            bin_pkg_dst[2]=${bin_pkg_dst[2]#\!}
+            bin_pkg_dst[2]=${bin_pkg_dst[1]#[a-zA-Z]#:}
+        else
+            continue
+        fi
+
+        local target_binary="${${(M)bin_pkg_dst[1]:#/*}:-$dir/bin/${bin_pkg_dst[1]}}" \
+            fnam="${bin_pkg_dst[3]:-${bin_pkg_dst[1]:t}}"
+        local file="$ZPFX/bin/$fnam"
+
+        if [[ -f $file ]]; then
+            command rm -f "$file"
+            if [[ -f $file ]]; then
+                print -P -- "%F{38}rust annex: %F{160}Couldn't remove the %F{220}$fnam%F{160} shim from \$ZPFX/bin (no write access to \$ZPFX/bin?)%f"
+            else
+                print -P -- "%F{38}rust annex: %F{154}Correctly removed the %F{220}$fnam%F{154} shim from \$ZPFX/bin%f" || \
+            fi
+        else
+            print -P -- "%F{38}rust annex: %F{160}The %F{220}$fnam%F{160} shim didn't exist in \$ZPFX/bin (or isn't a regular file)%f"
+        fi
+    }
+}
+
+# vim:ft=zsh:sw=4:sts=4:et
