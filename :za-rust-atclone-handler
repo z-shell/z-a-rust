@@ -90,7 +90,7 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
         bin_pkg_dst=( ${(@s.->.)cargo} )
         tmpsdst=( ${(@s.<-.)bin_pkg_dst[1]} )
         if (( ${#tmpsdst} > 1 )); then
-            bin_pkg_dst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
+            bin_pkg_dst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${bin_pkg_dst[2]:-${tmpdist[2]#\!}}" )
         else
             bin_pkg_dst=( "${tmpsdst[1]#\!}" "${tmpsdst[1]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
         fi
@@ -136,7 +136,7 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
         tmpsdst=( ${(@s.<-.)bin_pkg_dst[1]} )
         tmpsdst=( "${tmpsdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
         if (( ${#tmpsdst} > 1 )); then
-            bin_pkg_dst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
+            bin_pkg_dst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${bin_pkg_dst[2]:-${tmpdist[2]#\!}}" )
         else
             bin_pkg_dst=( "${tmpsdst[1]#\!}" "${tmpsdst[1]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
         fi
