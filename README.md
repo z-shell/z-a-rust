@@ -1,7 +1,7 @@
 # z-a-rust
 
 A Zsh-Zplugin annex that installs rust and cargo packages locally inside the
-plugins' or snippets' directories. The crate can then have a so called *shim*
+plugin or snippet directories. The crate can then have a so called *shim*
 created (name borrowed from `rbenv`) – a script that's located in the standard
 `$PATH` entry "`$ZPFX/bin`" of following contents (example):
 
