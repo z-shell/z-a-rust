@@ -133,6 +133,7 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
                 (
                     builtin cd -q "$toml_dir" && {
                         if (( ${+ZPLG_ICE[rustup]} )) {
+                            local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
                             command $dir/bin/cargo update
                             command $dir/bin/cargo build
                         } else {
