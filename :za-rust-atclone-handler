@@ -77,6 +77,7 @@ if (( ${+ZPLG_ICE[rustup]} )) {
             local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" 
             print -P -- "%F{38}rust annex: %F{154}Running the rustup installer...%f"
             bin/rustup-init -y --no-modify-path |& command egrep '(installing|installed)'
+            bin/rustup component remove rust-docs
         ) || \
             return 0
     else
