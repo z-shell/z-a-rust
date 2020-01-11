@@ -75,9 +75,14 @@ if (( ${+ZPLG_ICE[rustup]} )) {
             }
             command chmod +x bin/rustup-init
             local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" 
-            print -P -- "%F{38}rust annex: %F{154}Running the rustup installer...%f"
-            bin/rustup-init -y --no-modify-path |& command egrep '(installing|installed)'
-            bin/rustup component remove rust-docs
+            if (( !ICE_OPTS[opt_-q,--quiet] )) {
+                print -P -- "%F{38}rust annex: %F{154}Running the rustup installer...%f"
+                bin/rustup-init -y --no-modify-path |& command egrep '(installing|installed)'
+                bin/rustup component remove rust-docs
+            } else {
+                bin/rustup-init -y --no-modify-path &> /dev/null
+                bin/rustup component remove rust-docs &> /dev/null
+            }
         ) || \
             return 0
     else
@@ -87,8 +92,12 @@ if (( ${+ZPLG_ICE[rustup]} )) {
                 return 1
             }
             local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
-            print -P -- "%F{38}rust annex: %F{154}Running \`rustup update'...%f"
-            rustup update
+            if (( !ICE_OPTS[opt_-q,--quiet] )) {
+                print -P -- "%F{38}rust annex: %F{154}Running \`rustup update'...%f"
+                rustup update
+            } else {
+                rustup update &> /dev/null
+            }
         )
     fi
 }
@@ -126,7 +135,9 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
                 cargo install --force --root "$dir" "${cargos[@]}"
             }
         elif [[ "$hook" = *atpull ]]; then
-            print -P -- "%F{38}rust annex: %F{154}Updating the installed crates...%f"
+            if (( !ICE_OPTS[opt_-q,--quiet] )) {
+                print -P -- "%F{38}rust annex: %F{154}Updating the installed crates...%f"
+            }
             local toml_dir
             local -a tomls
             tomls=( "$dir"/**/Cargo.toml(N.) )
@@ -201,7 +212,9 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
         command chmod +x "$file"
 
         if [[ -x $file ]]; then
-            print -P -- "%F{38}rust annex: %F{154}${${hook:#*atclone}:+Re-}Created the %F{220}$fnam%F{154} shim%f"
+            if (( !ICE_OPTS[opt_-q,--quiet] )) {
+                print -P -- "%F{38}rust annex: %F{154}${${hook:#*atclone}:+Re-}Created the %F{220}$fnam%F{154} shim%f"
+            }
         else
             print -P -- "%F{38}rust annex: %F{160}Something went wrong creating the %F{220}$fnam%F{160} shim%f"
         fi
