@@ -57,11 +57,11 @@ local nl=$'\n'
     return 0
 } # }}}
 
-if (( ${+ZPLG_ICE[rustup]} )) {
+if (( ${+ZINIT_ICE[rustup]} )) {
     if [[ $hook = *atclone ]]; then
         (
             builtin cd -q "$dir" || {
-                print -P -- "%F{38}rust annex: %F{160}An internal error, please report at: %F{220}https://github.com/zplugin/z-a-rust/issues%F{160}%f"
+                print -P -- "%F{38}rust annex: %F{160}An internal error, please report at: %F{220}https://github.com/zinit/z-a-rust/issues%F{160}%f"
                 return 1
             }
             command mkdir -p bin rustup
@@ -88,7 +88,7 @@ if (( ${+ZPLG_ICE[rustup]} )) {
     else
         (
             builtin cd -q "$dir" || {
-                print -P -- "%F{38}rust annex: %F{160}An internal error, please report at: %F{220}https://github.com/zplugin/z-a-rust/issues%F{160}%f"
+                print -P -- "%F{38}rust annex: %F{160}An internal error, please report at: %F{220}https://github.com/zinit-zsh/z-a-rust/issues%F{160}%f"
                 return 1
             }
             local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
@@ -102,9 +102,9 @@ if (( ${+ZPLG_ICE[rustup]} )) {
     fi
 }
 
-if [[ -n "${ZPLG_ICE[cargo]}" ]] {
+if [[ -n "${ZINIT_ICE[cargo]}" ]] {
     local -a cargo_defs bin_pkg_dst tmpsdst cargos
-    cargo_defs=( "${(s.;.)ZPLG_ICE[cargo]}" )
+    cargo_defs=( "${(s.;.)ZINIT_ICE[cargo]}" )
 
     local cargo
 
@@ -128,7 +128,7 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
     (( ${#cargos} )) && {
         if [[ "$hook" = *atclone ]]; then
             print -P -- "%F{38}rust annex: %F{154}Instaling the requested crates...%f"
-            if (( ${+ZPLG_ICE[rustup]} )) {
+            if (( ${+ZINIT_ICE[rustup]} )) {
                 local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
                 command $dir/bin/cargo install --force --root "$dir" "${cargos[@]}"
             } else {
@@ -144,7 +144,7 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
             for toml_dir ( ${tomls:h} ) {
                 (
                     builtin cd -q "$toml_dir" && {
-                        if (( ${+ZPLG_ICE[rustup]} )) {
+                        if (( ${+ZINIT_ICE[rustup]} )) {
                             local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
                             command $dir/bin/cargo update
                             command $dir/bin/cargo build
@@ -159,9 +159,9 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
     }
 }
 
-if [[ -n "${ZPLG_ICE[cargo]}" ]] {
+if [[ -n "${ZINIT_ICE[cargo]}" ]] {
     local -a cargos bin_pkg_dst
-    cargos=( "${(s.;.)ZPLG_ICE[cargo]}" )
+    cargos=( "${(s.;.)ZINIT_ICE[cargo]}" )
 
     local cargo
 
@@ -203,7 +203,7 @@ if [[ -n "${ZPLG_ICE[cargo]}" ]] {
 
         .za-rust-bin-or-src-function-body 0 \
                     "$fnam" "$target_binary" "$dir" \
-                    "${${(M)set_rust_home_vars:#1}:-${+ZPLG_ICE[rustup]}}" \
+                    "${${(M)set_rust_home_vars:#1}:-${+ZINIT_ICE[rustup]}}" \
                     "$set_gem_home" "$set_node_path" "$set_cwd" \
                     "$use_all_null" "$use_err_null" "$use_out_null"
 

@@ -16,23 +16,23 @@ autoload .za-rust-bin-or-src-function-body \
 # An empty stub to fill the help handler fields
 :za-rust-help-null-handler() { :; }
 
-@zplg-register-annex "z-a-rust" \
+@zinit-register-annex "z-a-rust" \
     hook:atload \
     :za-rust-atload-handler \
     :za-rust-help-handler \
     "rustup|cargo''" # also register new ices
 
-@zplg-register-annex "z-a-rust" \
+@zinit-register-annex "z-a-rust" \
     hook:atclone \
     :za-rust-atclone-handler \
     :za-rust-help-null-handler
 
-@zplg-register-annex "z-a-rust" \
+@zinit-register-annex "z-a-rust" \
     hook:\%atpull \
     :za-rust-atclone-handler \
     :za-rust-help-null-handler
 
-@zplg-register-annex "z-a-rust" \
+@zinit-register-annex "z-a-rust" \
     hook:atdelete \
     :za-rust-atdelete-handler \
     :za-rust-help-null-handler
