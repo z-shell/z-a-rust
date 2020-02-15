@@ -9,10 +9,10 @@ created (name borrowed from `rbenv`) – a script that's located in the standar
 #!/usr/bin/env zsh
 
 function lsd {
-    local bindir="/root/.zplugin/plugins/zdharma---null/bin"
-    local -x PATH="/root/.zplugin/plugins/zdharma---null"/bin:"$PATH" # -x means export
-    local -x RUSTUP_HOME="/root/.zplugin/plugins/zdharma---null"/rustup \
-            CARGO_HOME="/root/.zplugin/plugins/zdharma---null"
+    local bindir="/root/.zinit/plugins/zdharma---null/bin"
+    local -x PATH="/root/.zinit/plugins/zdharma---null"/bin:"$PATH" # -x means export
+    local -x RUSTUP_HOME="/root/.zinit/plugins/zdharma---null"/rustup \
+            CARGO_HOME="/root/.zinit/plugins/zdharma---null"
 
     "$bindir"/"lsd" "$@"
 }
@@ -35,32 +35,32 @@ Example uses are:
 ```zsh
 # Installs rust and then the `lsd' crate and creates
 # the `lsd' shim exposing the binary
-zplugin ice rustup cargo'!lsd'
-zplugin load zdharma/null
+zinit ice rustup cargo'!lsd'
+zinit load zdharma/null
 
 # Installs rust and then the `exa' crate and creates
 # the `ls' shim exposing the `exa' binary
-zplugin ice rustup cargo'!exa -> ls'
-zplugin load zdharma/null
+zinit ice rustup cargo'!exa -> ls'
+zinit load zdharma/null
 
 # Installs rust and then the `exa' and `lsd' crates
-zplugin ice rustup cargo'exa;lsd'
-zplugin load zdharma/null
+zinit ice rustup cargo'exa;lsd'
+zinit load zdharma/null
 
 # Installs rust and then the `exa' and `lsd' crates
 # and exposes their binaries by altering $PATH
-zplugin ice rustup cargo'exa;lsd' as"command" pick"bin/(exa|lsd)"
-zplugin load zdharma/null
+zinit ice rustup cargo'exa;lsd' as"command" pick"bin/(exa|lsd)"
+zinit load zdharma/null
 
 # Installs rust and then the `exa' crate and creates
 # its shim with standard error redirected to /dev/null
-zplugin ice rustup cargo'!E:exa'
-zplugin load zdharma/null
+zinit ice rustup cargo'!E:exa'
+zinit load zdharma/null
 
 # Just install rust and make it available globally in the system
-zplugin ice id-as"rust" wait"0" lucid rustup as"command" \
+zinit ice id-as"rust" wait"0" lucid rustup as"command" \
             pick"bin/rustc" atload="export RUSTUP_HOME=\$PWD/rustup"
-zplugin load zdharma/null
+zinit load zdharma/null
 ```
 
 Flags meanings:
@@ -80,7 +80,7 @@ and/or `… -> {shim-name}` allows to override them.
 Simply load like a regular plugin, i.e.:
 
 ```zsh
-zplugin light zplugin/z-a-rust
+zinit light zinit-zsh/z-a-rust
 ```
 
 This installs the annex and makes the `rustup` and `cargo''` ices available.
@@ -88,6 +88,6 @@ This installs the annex and makes the `rustup` and `cargo''` ices available.
 # Example
 
 ![example z-a-rust
-use](https://raw.githubusercontent.com/zplugin/z-a-rust/master/images/z-a-rust.png)
+use](https://raw.githubusercontent.com/zinit-zsh/z-a-rust/master/images/z-a-rust.png)
 
 <!-- vim:set ft=markdown tw=80 fo+=an1 autoindent: -->
