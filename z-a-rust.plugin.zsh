@@ -9,31 +9,31 @@
 0="${${(M)0:#/*}:-$PWD/$0}"
 
 autoload .za-rust-bin-or-src-function-body \
-    :za-rust-atload-handler :za-rust-atclone-handler \
-    :za-rust-atpull-handler :za-rust-help-handler \
-    :za-rust-atdelete-handler
+    →za-rust-atload-handler →za-rust-atclone-handler \
+    →za-rust-atpull-handler →za-rust-help-handler \
+    →za-rust-atdelete-handler
 
 # An empty stub to fill the help handler fields
-:za-rust-help-null-handler() { :; }
+→za-rust-help-null-handler() { :; }
 
 @zinit-register-annex "z-a-rust" \
     hook:atload \
-    :za-rust-atload-handler \
-    :za-rust-help-handler \
+    →za-rust-atload-handler \
+    →za-rust-help-handler \
     "rustup|cargo''" # also register new ices
 
 @zinit-register-annex "z-a-rust" \
     hook:atclone \
-    :za-rust-atclone-handler \
-    :za-rust-help-null-handler
+    →za-rust-atclone-handler \
+    →za-rust-help-null-handler
 
 @zinit-register-annex "z-a-rust" \
     hook:\%atpull \
-    :za-rust-atclone-handler \
-    :za-rust-help-null-handler
+    →za-rust-atclone-handler \
+    →za-rust-help-null-handler
 
 @zinit-register-annex "z-a-rust" \
     hook:atdelete \
-    :za-rust-atdelete-handler \
-    :za-rust-help-null-handler
+    →za-rust-atdelete-handler \
+    →za-rust-help-null-handler
 
