@@ -15,7 +15,7 @@ trap "unset -f -- \"\${(k)functions[@]:|za_rust_ef}\" &>/dev/null; unset za_rust
 
 local nl=$'\n'
 
-# FUNCTION: .z-a-rust-download-file-stdout {{{
+# FUNCTION: .z-a-rust-download-file-stdout [[[
 # Downloads file to stdout. Supports following backend commands:
 # curl, wget, lftp, lynx. Used by snippet loading.
 .z-a-rust-download-file-stdout() {
@@ -55,7 +55,7 @@ local nl=$'\n'
     fi
 
     return 0
-} # }}}
+} # ]]]
 
 if (( ${+ZINIT_ICE[rustup]} )) {
     if [[ $hook = *atclone ]]; then
@@ -220,4 +220,4 @@ if [[ -n "${ZINIT_ICE[cargo]}" ]] {
         fi
     }
 }
-# vim:ft=zsh:sw=4:sts=4:et
+# vim:ft=zsh:sw=4:sts=4:et:foldmarker=[[[,]]]
