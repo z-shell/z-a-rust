@@ -61,7 +61,7 @@ if (( ${+ZINIT_ICE[rustup]} )) {
     if [[ $hook = *atclone ]]; then
         (
             builtin cd -q "$dir" || {
-                print -P -- "%F{38}rust annex: %F{160}An internal error, please report at: %F{220}https://github.com/zinit/z-a-rust/issues%F{160}%f"
+                print -P -- "%F{38}rust annex: %F{198}An internal error, please report at: %F{220}https://github.com/zinit/z-a-rust/issues%F{198}%f"
                 return 1
             }
             command mkdir -p bin rustup
@@ -69,7 +69,7 @@ if (( ${+ZINIT_ICE[rustup]} )) {
             {
                 .z-a-rust-download-file-stdout 'https://sh.rustup.rs' 1 >! bin/rustup-init || \
                 {
-                    print -P -- "%F{38}rust annex: %F{160}Couldn't download the %F{220}rustup.rs%F{160} installer%f"
+                    print -P -- "%F{38}rust annex: %F{198}Couldn't download the %F{220}rustup.rs%F{198} installer%f"
                     return 0
                 }
             }
@@ -88,7 +88,7 @@ if (( ${+ZINIT_ICE[rustup]} )) {
     else
         (
             builtin cd -q "$dir" || {
-                print -P -- "%F{38}rust annex: %F{160}An internal error, please report at: %F{220}https://github.com/zinit-zsh/z-a-rust/issues%F{160}%f"
+                print -P -- "%F{38}rust annex: %F{198}An internal error, please report at: %F{220}https://github.com/zinit-zsh/z-a-rust/issues%F{198}%f"
                 return 1
             }
             local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
@@ -216,7 +216,7 @@ if [[ -n "${ZINIT_ICE[cargo]}" ]] {
                 print -P -- "%F{38}rust annex: %F{154}${${hook:#*atclone}:+Re-}Created the %F{220}$fnam%F{154} shim%f"
             }
         else
-            print -P -- "%F{38}rust annex: %F{160}Something went wrong creating the %F{220}$fnam%F{160} shim%f"
+            print -P -- "%F{38}rust annex: %F{198}Something went wrong creating the %F{220}$fnam%F{198} shim%f"
         fi
     }
 }
