@@ -1,6 +1,6 @@
 # z-a-rust
 
-A Zsh-Zplugin annex that installs rust and cargo packages locally inside the
+A Zsh-Zinit annex that installs rust and cargo packages locally inside the
 plugin or snippet directories. The crate can then have a so called *shim*
 created (name borrowed from `rbenv`) – a script that's located in the standard
 `$PATH` entry "`$ZPFX/bin`" of following contents (example):
@@ -24,7 +24,7 @@ As it can be seen shim ultimately provides the binary to the command line.
 
 ## Usage
 
-The Zplugin annex provides two new ices: `rustup` and `cargo''`. The first one
+The Zinit annex provides two new ices: `rustup` and `cargo''`. The first one
 installs rust inside the plugin's folder using the official `rustup` installer.
 The second one has the following syntax:
 
