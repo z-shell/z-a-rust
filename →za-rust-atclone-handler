@@ -58,7 +58,7 @@ local nl=$'\n'
 } # ]]]
 
 if (( ${+ZINIT_ICE[rustup]} )) {
-    if [[ $hook = *atclone ]]; then
+    if [[ $hook = *atclone ]] {
         (
             builtin cd -q "$dir" || {
                 print -P -- "%F{38}rust annex: %F{198}An internal error, please report at: %F{220}https://github.com/zinit/z-a-rust/issues%F{198}%f"
@@ -85,7 +85,7 @@ if (( ${+ZINIT_ICE[rustup]} )) {
             }
         ) || \
             return 0
-    else
+    } else {
         (
             builtin cd -q "$dir" || {
                 print -P -- "%F{38}rust annex: %F{198}An internal error, please report at: %F{220}https://github.com/zinit-zsh/z-a-rust/issues%F{198}%f"
@@ -99,7 +99,7 @@ if (( ${+ZINIT_ICE[rustup]} )) {
                 rustup update &> /dev/null
             }
         )
-    fi
+    }
 }
 
 if [[ -n "${ZINIT_ICE[cargo]}" ]] {
