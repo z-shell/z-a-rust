@@ -94,7 +94,7 @@ if (( ${+ZINIT_ICE[rustup]} )) {
             local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
             if (( !ICE_OPTS[opt_-q,--quiet] )) {
                 print -P -- "%F{38}rust annex: %F{154}Running \`rustup update'...%f"
-                rustup update
+                rustup update |& command egrep -i '(error|warning|installing|info: latest update )'
             } else {
                 rustup update &> /dev/null
             }
