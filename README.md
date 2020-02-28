@@ -65,7 +65,7 @@ zinit load zdharma/null
 
 # A little more complex rustup configuration that uses Bin-Gem-Node annex
 # and installs the cargo completion provided with rustup, using for-syntax
-zinit id-as"rust" wait=1 as=null sbin="bin/*" lucid rustup \
+zinit id-as=rust wait=1 as=null sbin="bin/*" lucid rustup \
     atload="[[ ! -f ${ZINIT[COMPLETIONS_DIR]}/_cargo ]] && zi creinstall rust; \
     export CARGO_HOME=\$PWD RUSTUP_HOME=\$PWD/rustup" for \
         zdharma/null
