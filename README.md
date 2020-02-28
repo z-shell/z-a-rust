@@ -59,8 +59,17 @@ zinit load zdharma/null
 
 # Just install rust and make it available globally in the system
 zinit ice id-as"rust" wait"0" lucid rustup as"command" \
-            pick"bin/rustc" atload="export RUSTUP_HOME=\$PWD/rustup"
+            pick"bin/rustc" atload="export \
+                CARGO_HOME=\$PWD RUSTUP_HOME=\$PWD/rustup"
 zinit load zdharma/null
+
+# A little more complex rustup configuration that uses Bin-Gem-Node annex
+# and installs the cargo completion provided with rustup, using for-syntax
+zinit id-as"rust" wait=1 as=null sbin="bin/*" lucid rustup \
+    atload="[[ ! -f ${ZINIT[COMPLETIONS_DIR]}/_cargo ]] && zi creinstall rust; \
+    export CARGO_HOME=\$PWD RUSTUP_HOME=\$PWD/rustup" for \
+        zdharma/null
+
 ```
 
 Flags meanings:
