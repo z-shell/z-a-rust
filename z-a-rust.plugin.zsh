@@ -17,23 +17,23 @@ autoload .za-rust-bin-or-src-function-body \
 →za-rust-help-null-handler() { :; }
 
 @zinit-register-annex "z-a-rust" \
-    hook:atload \
+    hook:atload-40 \
     →za-rust-atload-handler \
     →za-rust-help-handler \
     "rustup|cargo''" # also register new ices
 
 @zinit-register-annex "z-a-rust" \
-    hook:atclone \
+    hook:atclone-40 \
     →za-rust-atclone-handler \
     →za-rust-help-null-handler
 
 @zinit-register-annex "z-a-rust" \
-    hook:\%atpull \
+    hook:\%atpull-40 \
     →za-rust-atclone-handler \
     →za-rust-help-null-handler
 
 @zinit-register-annex "z-a-rust" \
-    hook:atdelete \
+    hook:atdelete-40 \
     →za-rust-atdelete-handler \
     →za-rust-help-null-handler
 
