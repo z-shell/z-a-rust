@@ -62,7 +62,7 @@ local nl=$'\n'
 } # ]]]
 
 if (( ${+ZINIT_ICE[rustup]} )) {
-    if [[ $hook = *atclone ]] {
+    if [[ $hook = *atclone-<-> ]] {
         (
             builtin cd -q "$dir" || {
                 print -P -- "%F{38}rust annex: %F{198}An internal error, please report at: %F{220}https://github.com/zinit/z-a-rust/issues%F{198}%f"
@@ -130,7 +130,7 @@ if [[ -n "${ZINIT_ICE[cargo]}" ]] {
     }
 
     (( ${#cargos} )) && {
-        if [[ "$hook" = *atclone ]]; then
+        if [[ "$hook" = *atclone-<-> ]]; then
             print -P -- "%F{38}rust annex: %F{154}Instaling the requested crates...%f"
             if (( ${+ZINIT_ICE[rustup]} )) {
                 local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
@@ -138,7 +138,7 @@ if [[ -n "${ZINIT_ICE[cargo]}" ]] {
             } else {
                 cargo install --force --root "$dir" "${cargos[@]}"
             }
-        elif [[ "$hook" = *atpull ]]; then
+        elif [[ "$hook" = *atpull-<-> ]]; then
             if (( !ICE_OPTS[opt_-q,--quiet] )) {
                 print -P -- "%F{38}rust annex: %F{154}Updating the installed crates...%f"
             }
