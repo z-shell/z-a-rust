@@ -217,7 +217,7 @@ if [[ -n "${ZINIT_ICE[cargo]}" ]] {
 
         if [[ -x $file ]]; then
             if (( !ICE_OPTS[opt_-q,--quiet] )) {
-                print -P -- "%F{38}rust annex: %F{154}${${hook:#*atclone}:+Re-}Created the %F{220}$fnam%F{154} shim%f"
+                print -P -- "%F{38}rust annex: %F{154}${${hook:#*atclone-<->}:+Re-}Created the %F{220}$fnam%F{154} shim%f"
             }
         else
             print -P -- "%F{38}rust annex: %F{198}Something went wrong creating the %F{220}$fnam%F{198} shim%f"
