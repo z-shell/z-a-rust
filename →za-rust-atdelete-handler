@@ -10,9 +10,9 @@ setopt extendedglob warncreateglobal typesetsilent noshortloops
 
 local nl=$'\n'
 
-if [[ -n "${ZINIT_ICE[cargo]}" ]] {
+if [[ -n "${ICE[cargo]}" ]] {
     local -a cargos bin_pkg_dst tmpsdst
-    cargos=( "${(s.;.)ZINIT_ICE[cargo]}" )
+    cargos=( "${(s.;.)ICE[cargo]}" )
 
     local cargo
 
