@@ -217,10 +217,12 @@ if [[ -n "${ICE[cargo]}" ]] {
 
         if [[ -x $file ]]; then
             if (( !OPTS[opt_-q,--quiet] )) {
-                print -P -- "%F{38}rust annex: %F{154}${${hook:#*atclone-<->}:+Re-}Created the %F{220}$fnam%F{154} shim%f"
+                if [[ $hook == atclone-<-> || $ZINIT[annex-multi-flag:pull-active] -ge 1 ]] {
+                    +zinit-message "{pre}rust annex: {data2}${${hook:#*atclone-<->}:+Re-}Created the {file}$fnam{data2} shim.{rst}"
+                fi
             }
         else
-            print -P -- "%F{38}rust annex: %F{198}Something went wrong creating the %F{220}$fnam%F{198} shim%f"
+            print -P -- "{error}rust annex: {data2}Something went wrong creating the {file}$fnam{data2} shim.{rst}"
         fi
     }
 }
