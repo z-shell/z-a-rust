@@ -1,16 +1,16 @@
 - [Introduction](#introduction)
-	- [Usage](#usage)
-	- [Installation](#installation)
-- [Example](#example)
+- [Usage](#usage)
+- [Installation](#installation)
+
 # Introduction
 
 > **[?]**
 > This repository not compatible with previous versions (zplugin, zinit).
-> 
+>
 > Please upgrade to [ZI](https://github.com/z-shell-zi)
 
 A ZI Annex that installs rust and cargo packages locally inside the
-plugin or snippet directories. The crate can then have a so called *shim*
+plugin or snippet directories. The crate can then have a so called _shim_
 created (name borrowed from `rbenv`) – a script that's located in the standard
 `$PATH` entry "`$ZPFX/bin`" of following contents (example):
 
@@ -31,7 +31,7 @@ lsd "$@"
 
 As it can be seen shim ultimately provides the binary to the command line.
 
-## Usage
+# Usage
 
 The ZI Annex provides two new ices: `rustup` and `cargo''`. The first one
 installs rust inside the plugin's folder using the official `rustup` installer.
@@ -83,17 +83,17 @@ zi id-as=rust wait=1 as=null sbin="bin/*" lucid rustup \
 
 Flags meanings:
 
-- `N` – redirect both standard output and error to `/dev/null`
-- `E` – redirect standard error to `/dev/null`
-- `O` – redirect standard output to `/dev/null`
-- `c` – change the current directory to the plugin's or snippet's directory before
-  executing the command
+-   `N` – redirect both standard output and error to `/dev/null`
+-   `E` – redirect standard error to `/dev/null`
+-   `O` – redirect standard output to `/dev/null`
+-   `c` – change the current directory to the plugin's or snippet's directory before
+    executing the command
 
 As the examples showed, the name of the binary to run and the shim name are
 by default equal to the name of the crate. Specifying `{binary-name} <- …`
 and/or `… -> {shim-name}` allows to override them.
 
-## Installation
+# Installation
 
 Simply load like a regular plugin, i.e.:
 
@@ -102,8 +102,3 @@ zi light z-shell/z-a-rust
 ```
 
 This installs the annex and makes the `rustup` and `cargo''` ices available.
-
-# Example
-
-![example z-a-rust
-use](https://raw.githubusercontent.com/z-shell/z-a-rust/main/images/z-a-rust.png)
