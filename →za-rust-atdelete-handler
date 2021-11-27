@@ -2,7 +2,7 @@
 # shellcheck disable=SC1050,SC1072,SC1073,SC1050,SC1140,SC1083
 #
 # Copyright (c) 2019 Sebastian Gniazdowski
-# Copyright (c) 2021 ZA-RUST contributors
+# Copyright (c) 2021 Z-Shell ZI Contributors
 
 emulate -RL zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops

@@ -2,7 +2,7 @@
 # shellcheck disable=3043,2034,3003,2296,2298,1037,3006,2154,3024
 
 # Copyright (c) 2019 Sebastian Gniazdowski
-# Copyright (c) 2021 ZA-RUST contributors
+# Copyright (c) 2021 Z-Shell ZI Contributors
 #
 # FUNCTION: .za-bgn-bin-or-src-function-body
 # Returns the body of the function wrapping a binary

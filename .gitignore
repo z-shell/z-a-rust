@@ -21,11 +21,13 @@ Cargo.lock
 .zcalc_history
 
 # A popular plugin manager's files
+._zi
+.zi_lastupd
 ._zinit
 .zinit_lastupd
 
-# zdharma/zshelldoc tool's files
-zsdoc/data
+# zshelldoc tool's files
+docs/zsdoc/data
 
 # robbyrussell/oh-my-zsh/plugins/per-directory-history plugin's files
 # (when set-up to store the history in the local directory)
