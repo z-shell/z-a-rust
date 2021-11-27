@@ -1,5 +1,8 @@
+# shellcheck shell=sh
+# shellcheck disable=SC1050,SC1072,SC1073,SC1050,SC1140,SC1083
+#
 # Copyright (c) 2019 Sebastian Gniazdowski
-# License MIT
+# Copyright (c) 2021 ZA-RUST contributors
 
 emulate -RL zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops
@@ -52,5 +55,3 @@ if [[ -n "${ICE[cargo]}" ]] {
         fi
     }
 }
-
-# vim:ft=zsh:sw=4:sts=4:et

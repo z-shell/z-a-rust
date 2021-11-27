@@ -1,5 +1,8 @@
+# shellcheck shell=sh
+# shellcheck disable=SC1050,SC1072,SC1073,SC1050
+#
 # Copyright (c) 2019 Sebastian Gniazdowski
-# License MIT
+# Copyright (c) 2021 ZA-RUST contributors
 
 emulate -RL zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops
@@ -29,11 +32,11 @@ local nl=$'\n'
 
     if (( restart )); then
         (( ${path[(I)/usr/local/bin]} )) || \
-            { 
+            {
                 path+=( "/usr/local/bin" );
                 trap "path[-1]=()" EXIT
             }
-    
+
         if (( ${+commands[curl]} )) then
             command curl -fsSL "$url" || return 1
         elif (( ${+commands[wget]} )); then
@@ -65,7 +68,7 @@ if (( ${+ICE[rustup]} )) {
     if [[ $hook = *atclone-<-> ]] {
         (
             builtin cd -q "$dir" || {
-                print -P -- "%F{38}rust annex: %F{198}An internal error, please report at: %F{220}https://github.com/zinit/z-a-rust/issues%F{198}%f"
+                print -P -- "%F{38}rust annex: %F{198}An internal error, please report at: %F{220}https://github.com/z-shell/z-a-rust/issues%F{198}%f"
                 return 1
             }
             command mkdir -p bin rustup
@@ -78,7 +81,7 @@ if (( ${+ICE[rustup]} )) {
                 }
             }
             command chmod +x bin/rustup-init
-            local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" 
+            local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup"
             if (( !OPTS[opt_-q,--quiet] )) {
                 print -P -- "%F{38}rust annex: %F{154}Running the rustup installer...%f"
                 bin/rustup-init -y --no-modify-path |& command egrep '(installing|installed)'
@@ -92,7 +95,7 @@ if (( ${+ICE[rustup]} )) {
     } else {
         (
             builtin cd -q "$dir" || {
-                print -P -- "%F{38}rust annex: %F{198}An internal error, please report at: %F{220}https://github.com/zinit-zsh/z-a-rust/issues%F{198}%f"
+                print -P -- "%F{38}rust annex: %F{198}An internal error, please report at: %F{220}https://github.com/z-shell/z-a-rust/issues%F{198}%f"
                 return 1
             }
             local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
@@ -217,7 +220,7 @@ if [[ -n "${ICE[cargo]}" ]] {
 
         if [[ -x $file ]]; then
             if (( !OPTS[opt_-q,--quiet] )); then
-                if [[ $hook == atclone-<-> || $ZINIT[annex-multi-flag:pull-active] -ge 1 ]]; then
+                if [[ $hook == atclone-<-> || $ZI[annex-multi-flag:pull-active] -ge 1 ]]; then
                     +zinit-message "{pre}rust annex: {data2}${${hook:#*atclone-<->}:+Re-}Created the {file}$fnam{data2} shim.{rst}"
                 fi
             fi
@@ -226,4 +229,3 @@ if [[ -n "${ICE[cargo]}" ]] {
         fi
     }
 }
-# vim:ft=zsh:sw=4:sts=4:et:foldmarker=[[[,]]]

@@ -1,5 +1,8 @@
+# shellcheck shell=sh
+# shellcheck disable=3043,2034,3003,2296,2298,1037,3006,2154,3024
+
 # Copyright (c) 2019 Sebastian Gniazdowski
-# License MIT
+# Copyright (c) 2021 ZA-RUST contributors
 #
 # FUNCTION: .za-bgn-bin-or-src-function-body
 # Returns the body of the function wrapping a binary
@@ -37,5 +40,3 @@ fi
 REPLY+="$nl"
 REPLY+="${${(M)set_cwd:#1}:+"$nl$tab() { setopt localoptions noautopushd; builtin cd -q \"\$oldpwd\"; }"}
 }"
-
-# vim:ft=zsh:sw=4:sts=4:et
