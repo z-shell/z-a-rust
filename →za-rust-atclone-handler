@@ -221,7 +221,7 @@ if [[ -n "${ICE[cargo]}" ]] {
         if [[ -x $file ]]; then
             if (( !OPTS[opt_-q,--quiet] )); then
                 if [[ $hook == atclone-<-> || $ZI[annex-multi-flag:pull-active] -ge 1 ]]; then
-                    +zinit-message "{pre}rust annex: {data2}${${hook:#*atclone-<->}:+Re-}Created the {file}$fnam{data2} shim.{rst}"
+                    +zi-message "{pre}rust annex: {data2}${${hook:#*atclone-<->}:+Re-}Created the {file}$fnam{data2} shim.{rst}"
                 fi
             fi
         else
