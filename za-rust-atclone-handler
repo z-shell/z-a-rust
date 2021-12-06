@@ -1,5 +1,3 @@
-# shellcheck shell=sh disable=SC1050,SC1072,SC1073,SC1050
-#
 # Copyright (c) 2019 Sebastian Gniazdowski
 # Copyright (c) 2021 Z-Shell ZI Contributors
 
@@ -12,11 +10,11 @@ trap "unset -f -- \"\${(k)functions[@]:|za_rust_ef}\" &>/dev/null; unset za_rust
 trap "unset -f -- \"\${(k)functions[@]:|za_rust_ef}\" &>/dev/null; unset za_rust_ef; return 1" INT
 
 [[ "$1" = plugin ]] && \
-    local type="$1" user="$2" plugin="$3" id_as="$4" dir="$5" hook="$6" || \
-    local type="$1" url="$2" id_as="$3" dir="$4" hook="$5"
+  local type="$1" user="$2" plugin="$3" id_as="$4" dir="$5" hook="$6" || \
+  local type="$1" url="$2" id_as="$3" dir="$4" hook="$5"
 
 if [[ $OSTYPE == cygwin ]]; then
-    dir=`cygpath -w $dir`
+  dir=`cygpath -w $dir`
 fi
 
 local nl=$'\n'
@@ -25,9 +23,9 @@ local nl=$'\n'
 # Downloads file to stdout. Supports following backend commands:
 # curl, wget, lftp, lynx. Used by snippet loading.
 .z-a-rust-download-file-stdout() {
-    local url="$1" restart="$2"
+  local url="$1" restart="$2"
 
-    setopt localoptions localtraps
+setopt localoptions localtraps
 
     if (( restart )); then
         (( ${path[(I)/usr/local/bin]} )) || \
