@@ -15,23 +15,15 @@ za-rust-atdelete-handler
 # An empty stub to fill the help handler fields
 za-rust-help-null-handler() { :; }
 
-@zi-register-annex "z-a-rust" \
-hook:atload-40 \
-za-rust-atload-handler \
-za-rust-help-handler \
+@zi-register-annex "z-a-rust" hook:atload-40 \
+za-rust-atload-handler za-rust-help-handler \
 "rustup|cargo''" # also register new ices
 
-@zi-register-annex "z-a-rust" \
-hook:atclone-40 \
-za-rust-atclone-handler \
-za-rust-help-null-handler
+@zi-register-annex "z-a-rust" hook:atclone-40 \
+za-rust-atclone-handler za-rust-help-null-handler
 
-@zi-register-annex "z-a-rust" \
-hook:\%atpull-40 \
-za-rust-atclone-handler \
-za-rust-help-null-handler
+@zi-register-annex "z-a-rust" hook:\%atpull-40 \
+za-rust-atclone-handler za-rust-help-null-handler
 
-@zi-register-annex "z-a-rust" \
-hook:atdelete-40 \
-za-rust-atdelete-handler \
-za-rust-help-null-handler
+@zi-register-annex "z-a-rust" hook:atdelete-40 \
+za-rust-atdelete-handler za-rust-help-null-handler
