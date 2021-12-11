@@ -22,9 +22,9 @@ Cargo.lock
 
 # A popular plugin manager's files
 ._zi
-.zi_lastupd
 ._zinit
 .zinit_lastupd
+.zi_lastupd
 
 # zshelldoc tool's files
 docs/zsdoc/data
