@@ -1,6 +1,11 @@
-<h1> ZI Annex Rust </h1>
+<h2 align="center">
+  <a href="https://github.com/z-shell/zi">
+    <img src="https://github.com/z-shell/zi/raw/main/docs/images/logo.svg" alt="Logo" width="80" height="80" />
+  </a>
+❮ ZI ❯ Annex -Rust
+</h2>
 
-### **Wiki:** [z-a-rust](https://github.com/z-shell/zi/wiki/z-a-rust)
+## **Wiki:** [z-a-rust](https://github.com/z-shell/zi/wiki/z-a-rust)
 
 An Annex that installs rust and cargo packages locally inside the
 plugin or snippet directories. The crate can then have a so called _shim_
