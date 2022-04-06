@@ -36,3 +36,5 @@ fi
 REPLY+="$nl"
 REPLY+="${${(M)set_cwd:#1}:+"$nl$tab() { setopt localoptions noautopushd; builtin cd -q \"\$oldpwd\"; }"}
 }"
+
+# vim: ft=zsh sw=2 ts=2 et
