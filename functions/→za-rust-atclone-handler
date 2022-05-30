@@ -1,5 +1,7 @@
-# Copyright (c) 2019 Sebastian Gniazdowski
-# Copyright (c) 2021 Z-Shell ZI Contributors
+# -*- mode: zsh; sh-indentation: 2; indent-tabs-mode: nil; sh-basic-offset: 2; -*-
+# vim: ft=zsh sw=2 ts=2 et
+#
+# Copyright (c) 2021 Z-Shell Community
 
 emulate -RL zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops
@@ -65,7 +67,7 @@ if (( ${+ICE[rustup]} )) {
   if [[ $hook = *atclone-<-> ]] {
     (
       builtin cd -q "$dir" || {
-        print -P -- "%F{93}rust annex: %F{198}An internal error, please report at: %F{220}https://github.com/z-shell/z-a-rust/issues%F{198}%f"
+        +zi-message "{annex}rust-annex{ehi}:{rst} {error}An internal error, please report at: {url}https://github.com/z-shell/z-a-rust/issues{rst}"
         return 1
       }
       command mkdir -p bin rustup
@@ -73,14 +75,14 @@ if (( ${+ICE[rustup]} )) {
       {
         .z-a-rust-download-file-stdout 'https://sh.rustup.rs' 1 >! bin/rustup-init || \
         {
-          print -P -- "%F{93}rust annex: %F{198}Couldn't download the %F{220}rustup.rs%F{198} installer%f"
+          +zi-message "{annex}rust-annex{ehi}:{rst} {error}Could not download the {pname}rustup.rs{error} installer{rst}"
           return 0
         }
       }
       command chmod +x bin/rustup-init
       local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup"
       if (( !OPTS[opt_-q,--quiet] )) {
-        print -P -- "%F{93}rust annex: %F{51}Running the rustup installer...%f"
+        +zi-message "{annex}rust-annex{ehi}:{rst} Running the rustup installer…{rst}"
         bin/rustup-init -y --no-modify-path |& command egrep '(installing|installed)'
         bin/rustup component remove rust-docs
       } else {
@@ -91,12 +93,12 @@ if (( ${+ICE[rustup]} )) {
   } else {
     (
       builtin cd -q "$dir" || {
-        print -P -- "%F{93}rust annex: %F{198}An internal error, please report at: %F{220}https://github.com/z-shell/z-a-rust/issues%F{198}%f"
+        +zi-message "{annex}rust-annex{ehi}:{rst} {error}An internal error, please report at: {url}https://github.com/z-shell/z-a-rust/issues{rst}"
         return 1
       }
       local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
       if (( !OPTS[opt_-q,--quiet] )) {
-        print -P -- "%F{93}rust annex: %F{51}Running \`rustup update'...%f"
+        +zi-message "{annex}rust-annex{ehi}:{rst} Running \`rustup update'…{rst}"
         command rustup update |& command egrep -i '(error|warning|installing|info: latest update )'
       } else {
         command rustup update &> /dev/null
@@ -130,7 +132,7 @@ if [[ -n "${ICE[cargo]}" ]] {
 
   (( ${#cargos} )) && {
     if [[ "$hook" = *atclone-<-> ]]; then
-      print -P -- "%F{93}rust annex: %F{51}Instaling the requested crates...%f"
+      +zi-message "{annex}rust-annex{ehi}:{rst} Instaling the requested crates…{rst}"
       if (( ${+ICE[rustup]} )) {
         local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
         command $dir/bin/cargo install --force --root "$dir" "${cargos[@]}"
@@ -139,7 +141,7 @@ if [[ -n "${ICE[cargo]}" ]] {
       }
     elif [[ "$hook" = *atpull-<-> ]]; then
       if (( !OPTS[opt_-q,--quiet] )) {
-        print -P -- "%F{93}rust annex: %F{51}Updating the installed crates...%f"
+        +zi-message "{annex}rust-annex{ehi}:{rst} Updating the installed crates…{rst}"
       }
       local toml_dir
       local -a tomls
@@ -215,13 +217,11 @@ if [[ -n "${ICE[cargo]}" ]] {
     if [[ -x $file ]]; then
       if (( !OPTS[opt_-q,--quiet] )); then
         if [[ $hook == atclone-<-> || $ZI[annex-multi-flag:pull-active] -ge 1 ]]; then
-          +zi-message "{pre}rust annex: {data2}${${hook:#*atclone-<->}:+Re-}Created the {file}$fnam{data2} shim.{rst}"
+          +zi-message "{annex}rust-annex{ehi}:{rst} ${${hook:#*atclone-<->}:+Re-}Created the {pname}${fnam}{rst} shim"
         fi
       fi
     else
-      print -P -- "{error}rust annex: {data2}Something went wrong creating the {file}$fnam{data2} shim.{rst}"
+      +zi-message "{annex}rust-annex{ehi}:{rst} {error}Something went wrong while creating the {pname}${fnam}{rst} shim"
     fi
   }
 }
-
-# vim: ft=zsh sw=2 ts=2 et
