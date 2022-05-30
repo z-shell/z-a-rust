@@ -1,5 +1,7 @@
-# Copyright (c) 2019 Sebastian Gniazdowski
-# Copyright (c) 2021 Z-Shell ZI Contributors
+# -*- mode: zsh; sh-indentation: 2; indent-tabs-mode: nil; sh-basic-offset: 2; -*-
+# vim: ft=zsh sw=2 ts=2 et
+#
+# Copyright (c) 2021 Z-Shell Community
 
 emulate -RL zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops
@@ -43,14 +45,12 @@ if [[ -n "${ICE[cargo]}" ]] {
         if [[ -f $file ]]; then
             command rm -f "$file"
             if [[ -f $file ]]; then
-                print -P -- "%F{93}rust annex: %F{160}Couldn't remove the %F{220}$fnam%F{160} shim from \$ZPFX/bin (no write access to \$ZPFX/bin?)%f"
+              +zi-message "{annex}rust-annex{ehi}:{rst} {error}Could not remove the {pname}${fnam}{error} shim from {var}\$ZPFX/bin{error}, verify the permissions{rst}"
             else
-                print -P -- "%F{93}rust annex: %F{51}Correctly removed the %F{220}$fnam%F{51} shim from \$ZPFX/bin%f" || \
+              +zi-message "{annex}rust-annex{ehi}:{rst} Correctly removed the {pname}${fnam}{rst} shim from {var}\$ZPFX/bin{rst}" || \
             fi
         else
-            print -P -- "%F{93}rust annex: %F{160}The %F{220}$fnam%F{160} shim didn't exist in \$ZPFX/bin (or isn't a regular file)%f"
+          +zi-message "{annex}rust-annex{ehi}:{rst} {error}The {pname}${fnam}{error} shim did not exist in {var}\$ZPFX/bin{error} or is not a regular file{rst}"
         fi
     }
 }
-
-# vim: ft=zsh sw=2 ts=2 et
