@@ -1,5 +1,7 @@
-# Copyright (c) 2019 Sebastian Gniazdowski
-# Copyright (c) 2021 Z-Shell ZI Contributors
+# -*- mode: zsh; sh-indentation: 2; indent-tabs-mode: nil; sh-basic-offset: 2; -*-
+# vim: ft=zsh sw=2 ts=2 et
+#
+# Copyright (c) 2021 Z-Shell Community
 #
 # According to the Zsh Plugin Standard:
 # https://z.digitalclouds.dev/community/zsh_plugin_standard/#zero-handling
@@ -8,7 +10,7 @@
 
 # https://z.digitalclouds.dev/community/zsh_plugin_standard/#funtions-directory
 if [[ $PMSPEC != *f* ]] {
-    fpath+=( "${0:h}/functions" )
+  fpath+=( "${0:h}/functions" )
 }
 
 # https://z.digitalclouds.dev/community/zsh_plugin_standard/#the-proposed-function-name-prefixes
@@ -35,5 +37,3 @@ autoload .za-rust-bin-or-src-function-body \
 @zi-register-annex "z-a-rust" hook:atdelete-40 \
   →za-rust-atdelete-handler \
   →za-rust-help-null-handler
-
-# vim: ft=zsh sw=2 ts=2 et
