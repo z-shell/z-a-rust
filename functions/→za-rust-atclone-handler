@@ -3,189 +3,148 @@
 #
 # Copyright (c) 2021 Z-Shell Community
 
-emulate -RL zsh
-setopt extendedglob warncreateglobal typesetsilent noshortloops
+→za-rust-atclone-handler() {
 
-typeset -g za_rust_ef
-za_rust_ef=( ${(k)functions} )
-trap "unset -f -- \"\${(k)functions[@]:|za_rust_ef}\" &>/dev/null; unset za_rust_ef" EXIT
-trap "unset -f -- \"\${(k)functions[@]:|za_rust_ef}\" &>/dev/null; unset za_rust_ef; return 1" INT
+  builtin emulate -RL zsh ${=${options[xtrace]:#off}:+-o xtrace}
+  builtin setopt extendedglob warncreateglobal typesetsilent noshortloops
 
-[[ "$1" = plugin ]] && \
-local type="$1" user="$2" plugin="$3" id_as="$4" dir="$5" hook="$6" || \
-local type="$1" url="$2" id_as="$3" dir="$4" hook="$5"
+  typeset -g za_rust_ef
+  za_rust_ef=( ${(k)functions} )
+  trap "unset -f -- \"\${(k)functions[@]:|za_rust_ef}\" &>/dev/null; unset za_rust_ef" EXIT
+  trap "unset -f -- \"\${(k)functions[@]:|za_rust_ef}\" &>/dev/null; unset za_rust_ef; return 1" INT
 
-if [[ $OSTYPE == cygwin ]]; then
-  dir=`cygpath -w $dir`
-fi
+  [[ "$1" = plugin ]] && \
+  local type="$1" user="$2" plugin="$3" id_as="$4" dir="$5" hook="$6" || \
+  local type="$1" url="$2" id_as="$3" dir="$4" hook="$5"
 
-local nl=$'\n'
-
-# FUNCTION: .z-a-rust-download-file-stdout [[[
-# Downloads file to stdout. Supports following backend commands:
-# curl, wget, lftp, lynx. Used by snippet loading.
-.z-a-rust-download-file-stdout() {
-  local url="$1" restart="$2"
-
-setopt localoptions localtraps
-
-  if (( restart )); then
-    (( ${path[(I)/usr/local/bin]} )) || \
-      {
-        path+=( "/usr/local/bin" );
-        trap "path[-1]=()" EXIT
-      }
-
-    if (( ${+commands[curl]} )) then
-      command curl -fsSL "$url" || return 1
-    elif (( ${+commands[wget]} )); then
-      command wget -q "$url" -O - || return 1
-    elif (( ${+commands[lftp]} )); then
-      command lftp -c "cat $url" || return 1
-    elif (( ${+commands[lynx]} )) then
-      command lynx -source "$url" || return 1
-    else
-      return 2
-    fi
-  else
-    if type curl 2>/dev/null 1>&2; then
-      command curl -fsSL "$url" || return 1
-    elif type wget 2>/dev/null 1>&2; then
-      command wget -q "$url" -O - || return 1
-    elif type lftp 2>/dev/null 1>&2; then
-      command lftp -c "cat $url" || return 1
-    else
-      .z-a-rust-download-file-stdout "$url" "1"
-      return $?
-    fi
+  if [[ $OSTYPE == cygwin ]]; then
+    dir=`cygpath -w $dir`
   fi
 
-  return 0
-} # ]]]
+  local nl=$'\n'
 
-if (( ${+ICE[rustup]} )) {
-  if [[ $hook = *atclone-<-> ]] {
-    (
-      builtin cd -q "$dir" || {
-        +zi-message "{annex}rust-annex{ehi}:{rst} {error}An internal error, please report at: {url}https://github.com/z-shell/z-a-rust/issues{rst}"
-        return 1
-      }
-      command mkdir -p bin rustup
-      .z-a-rust-download-file-stdout 'https://sh.rustup.rs' 0 >! bin/rustup-init || \
-      {
-        .z-a-rust-download-file-stdout 'https://sh.rustup.rs' 1 >! bin/rustup-init || \
-        {
-          +zi-message "{annex}rust-annex{ehi}:{rst} {error}Could not download the {pname}rustup.rs{error} installer{rst}"
-          return 0
+  if (( ${+ICE[rustup]} )) {
+    if [[ $hook = *atclone-<-> ]] {
+      (
+        builtin cd -q "$dir" || {
+          +zi-message "{annex}rust-annex{ehi}:{rst} {error}An internal error, please report at: {url}https://github.com/z-shell/z-a-rust/issues{rst}"
+          return 1
         }
-      }
-      command chmod +x bin/rustup-init
-      local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup"
-      if (( !OPTS[opt_-q,--quiet] )) {
-        +zi-message "{annex}rust-annex{ehi}:{rst} Running the rustup installer…{rst}"
-        bin/rustup-init -y --no-modify-path |& command egrep '(installing|installed)'
-        bin/rustup component remove rust-docs
-      } else {
-        bin/rustup-init -y --no-modify-path &> /dev/null
-        bin/rustup component remove rust-docs &> /dev/null
-      }
-    ) || return 0
-  } else {
-    (
-      builtin cd -q "$dir" || {
-        +zi-message "{annex}rust-annex{ehi}:{rst} {error}An internal error, please report at: {url}https://github.com/z-shell/z-a-rust/issues{rst}"
-        return 1
-      }
-      local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
-      if (( !OPTS[opt_-q,--quiet] )) {
-        +zi-message "{annex}rust-annex{ehi}:{rst} Running \`rustup update'…{rst}"
-        command rustup update |& command egrep -i '(error|warning|installing|info: latest update )'
-      } else {
-        command rustup update &> /dev/null
-      }
-    )
-  }
-}
-
-if [[ -n "${ICE[cargo]}" ]] {
-  local -a cargo_defs bin_pkg_dst tmpsdst cargos
-  cargo_defs=( "${(s.;.)ICE[cargo]}" )
-
-  local cargo
-
-  for cargo ( $cargo_defs ) {
-    bin_pkg_dst=( ${(@s.->.)cargo} )
-    tmpsdst=( ${(@s.<-.)bin_pkg_dst[1]} )
-    if (( ${#tmpsdst} > 1 )); then
-      bin_pkg_dst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${bin_pkg_dst[2]:-${tmpdist[2]#\!}}" )
-    else
-      bin_pkg_dst=( "${tmpsdst[1]#\!}" "${tmpsdst[1]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
-    fi
-    bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
-    bin_pkg_dst[2]=${bin_pkg_dst[2]#\!}
-    bin_pkg_dst[1]=${bin_pkg_dst[1]##[a-zA-Z]##:}
-    bin_pkg_dst[2]=${bin_pkg_dst[2]##[a-zA-Z]##:}
-    bin_pkg_dst[3]=${bin_pkg_dst[3]##[a-zA-Z]##:}
-
-    cargos+=( ${bin_pkg_dst[2]} )
-  }
-
-  (( ${#cargos} )) && {
-    if [[ "$hook" = *atclone-<-> ]]; then
-      +zi-message "{annex}rust-annex{ehi}:{rst} Instaling the requested crates…{rst}"
-      if (( ${+ICE[rustup]} )) {
-        local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
-        command $dir/bin/cargo install --force --root "$dir" "${cargos[@]}"
-      } else {
-        cargo install --force --root "$dir" "${cargos[@]}"
-      }
-    elif [[ "$hook" = *atpull-<-> ]]; then
-      if (( !OPTS[opt_-q,--quiet] )) {
-        +zi-message "{annex}rust-annex{ehi}:{rst} Updating the installed crates…{rst}"
-      }
-      local toml_dir
-      local -a tomls
-      tomls=( "$dir"/**/Cargo.toml(N.) )
-      for toml_dir ( ${tomls:h} ) {
-        (
-          builtin cd -q "$toml_dir" && {
-            if (( ${+ICE[rustup]} )) {
-              local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
-              command $dir/bin/cargo update
-              command $dir/bin/cargo build
-            } else {
-              cargo update
-              cargo build
-            }
+        command mkdir -p bin rustup
+        .z-a-rust-download-file-stdout 'https://sh.rustup.rs' 0 >! bin/rustup-init || \
+        {
+          .z-a-rust-download-file-stdout 'https://sh.rustup.rs' 1 >! bin/rustup-init || \
+          {
+            +zi-message "{annex}rust-annex{ehi}:{rst} {error}Could not download the {pname}rustup.rs{error} installer{rst}"
+            return 0
           }
-        )
-      }
-    fi
+        }
+        command chmod +x bin/rustup-init
+        local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup"
+        if (( !OPTS[opt_-q,--quiet] )) {
+          +zi-message "{annex}rust-annex{ehi}:{rst} Running the rustup installer…{rst}"
+          bin/rustup-init -y --no-modify-path |& command egrep '(installing|installed)'
+          bin/rustup component remove rust-docs
+        } else {
+          bin/rustup-init -y --no-modify-path &> /dev/null
+          bin/rustup component remove rust-docs &> /dev/null
+        }
+      ) || return 0
+    } else {
+      (
+        builtin cd -q "$dir" || {
+          +zi-message "{annex}rust-annex{ehi}:{rst} {error}An internal error, please report at: {url}https://github.com/z-shell/z-a-rust/issues{rst}"
+          return 1
+        }
+        local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
+        if (( !OPTS[opt_-q,--quiet] )) {
+          +zi-message "{annex}rust-annex{ehi}:{rst} Running \`rustup update'…{rst}"
+          command rustup update |& command egrep -i '(error|warning|installing|info: latest update )'
+        } else {
+          command rustup update &> /dev/null
+        }
+      )
+    }
   }
-}
 
-if [[ -n "${ICE[cargo]}" ]] {
-  local -a cargos bin_pkg_dst
-  cargos=( "${(s.;.)ICE[cargo]}" )
+  if [[ -n "${ICE[cargo]}" ]] {
+    local -a cargo_defs bin_pkg_dst tmpsdst cargos
+    cargo_defs=( "${(s.;.)ICE[cargo]}" )
 
-  local cargo
+    local cargo
 
-  for cargo ( $cargos ) {
-    integer set_rust_home_vars=0 \
-    set_gem_home=0 set_node_path=0 set_cwd=0 \
-    use_all_null=0 use_err_null=0 use_out_null=0
+    for cargo ( $cargo_defs ) {
+      bin_pkg_dst=( ${(@s.->.)cargo} )
+      tmpsdst=( ${(@s.<-.)bin_pkg_dst[1]} )
+      if (( ${#tmpsdst} > 1 )); then
+        bin_pkg_dst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${bin_pkg_dst[2]:-${tmpdist[2]#\!}}" )
+      else
+        bin_pkg_dst=( "${tmpsdst[1]#\!}" "${tmpsdst[1]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
+      fi
+      bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+      bin_pkg_dst[2]=${bin_pkg_dst[2]#\!}
+      bin_pkg_dst[1]=${bin_pkg_dst[1]##[a-zA-Z]##:}
+      bin_pkg_dst[2]=${bin_pkg_dst[2]##[a-zA-Z]##:}
+      bin_pkg_dst[3]=${bin_pkg_dst[3]##[a-zA-Z]##:}
+      cargos+=( ${bin_pkg_dst[2]} )
+    }
 
-    bin_pkg_dst=( ${(@s.->.)cargo} )
-    bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
-    tmpsdst=( ${(@s.<-.)bin_pkg_dst[1]} )
-    tmpsdst=( "${tmpsdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
-    if (( ${#tmpsdst} > 1 )); then
-      bin_pkg_dst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${bin_pkg_dst[2]:-${tmpdist[2]#\!}}" )
-    else
-      bin_pkg_dst=( "${tmpsdst[1]#\!}" "${tmpsdst[1]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
-    fi
-    bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
-    if [[ ${bin_pkg_dst[2]} = \!* ]]; then
+    (( ${#cargos} )) && {
+      if [[ "$hook" = *atclone-<-> ]]; then
+        +zi-message "{annex}rust-annex{ehi}:{rst} Instaling the requested crates…{rst}"
+        if (( ${+ICE[rustup]} )) {
+          local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
+          command $dir/bin/cargo install --force --root "$dir" "${cargos[@]}"
+        } else {
+          cargo install --force --root "$dir" "${cargos[@]}"
+        }
+      elif [[ "$hook" = *atpull-<-> ]]; then
+        if (( !OPTS[opt_-q,--quiet] )) {
+          +zi-message "{annex}rust-annex{ehi}:{rst} Updating the installed crates…{rst}"
+        }
+        local toml_dir
+        local -a tomls
+        tomls=( "$dir"/**/Cargo.toml(N.) )
+        for toml_dir ( ${tomls:h} ) {
+          (
+            builtin cd -q "$toml_dir" && {
+              if (( ${+ICE[rustup]} )) {
+                local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
+                command $dir/bin/cargo update
+                command $dir/bin/cargo build
+              } else {
+                cargo update
+                cargo build
+              }
+            }
+          )
+        }
+      fi
+    }
+  }
+
+  if [[ -n "${ICE[cargo]}" ]] {
+    local -a cargos bin_pkg_dst
+    cargos=( "${(s.;.)ICE[cargo]}" )
+
+    local cargo
+
+    for cargo ( $cargos ) {
+      integer set_rust_home_vars=0 \
+      set_gem_home=0 set_node_path=0 set_cwd=0 \
+      use_all_null=0 use_err_null=0 use_out_null=0
+
+      bin_pkg_dst=( ${(@s.->.)cargo} )
+      bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+      tmpsdst=( ${(@s.<-.)bin_pkg_dst[1]} )
+      tmpsdst=( "${tmpsdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+      if (( ${#tmpsdst} > 1 )); then
+        bin_pkg_dst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${bin_pkg_dst[2]:-${tmpdist[2]#\!}}" )
+      else
+        bin_pkg_dst=( "${tmpsdst[1]#\!}" "${tmpsdst[1]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
+      fi
+      bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+      if [[ ${bin_pkg_dst[2]} = \!* ]]; then
         bin_pkg_dst[2]=${bin_pkg_dst[2]#\!}
         [[ ${bin_pkg_dst[2]} = [gncNEO]#R[gncNEO]#:* ]] && set_rust_home_vars=1
         [[ ${bin_pkg_dst[2]} = [gncNEO]#g[gncNEO]#:* ]] && set_gem_home=1
@@ -197,31 +156,31 @@ if [[ -n "${ICE[cargo]}" ]] {
         bin_pkg_dst[1]=${bin_pkg_dst[1]##[a-zA-Z]##:}
         bin_pkg_dst[2]=${bin_pkg_dst[2]##[a-zA-Z]##:}
         bin_pkg_dst[3]=${bin_pkg_dst[3]##[a-zA-Z]##:}
-    else
-      continue
-    fi
-
-
-    local target_binary="${${(M)bin_pkg_dst[1]:#/*}:-$dir/bin/${bin_pkg_dst[1]}}" \
-      fnam="${bin_pkg_dst[3]:-${bin_pkg_dst[1]:t}}"
-    local file="$ZPFX/bin/$fnam"
-
-    .za-rust-bin-or-src-function-body 0 "$fnam" "$target_binary" "$dir" \
-    "${${(M)set_rust_home_vars:#1}:-${+ICE[rustup]}}" \
-    "$set_gem_home" "$set_node_path" "$set_cwd" \
-    "$use_all_null" "$use_err_null" "$use_out_null"
-
-    builtin print -r -- "#!/usr/bin/env zsh$nl$nl$REPLY$nl$nl$fnam \"\$@\"" >! "$file"
-    command chmod +x "$file"
-
-    if [[ -x $file ]]; then
-      if (( !OPTS[opt_-q,--quiet] )); then
-        if [[ $hook == atclone-<-> || $ZI[annex-multi-flag:pull-active] -ge 1 ]]; then
-          +zi-message "{annex}rust-annex{ehi}:{rst} ${${hook:#*atclone-<->}:+Re-}Created the {pname}${fnam}{rst} shim"
-        fi
+      else
+        continue
       fi
-    else
-      +zi-message "{annex}rust-annex{ehi}:{rst} {error}Something went wrong while creating the {pname}${fnam}{rst} shim"
-    fi
+
+      local target_binary="${${(M)bin_pkg_dst[1]:#/*}:-$dir/bin/${bin_pkg_dst[1]}}" \
+        fnam="${bin_pkg_dst[3]:-${bin_pkg_dst[1]:t}}"
+      local file="$ZPFX/bin/$fnam"
+
+      .za-rust-bin-or-src-function-body 0 "$fnam" "$target_binary" "$dir" \
+      "${${(M)set_rust_home_vars:#1}:-${+ICE[rustup]}}" \
+      "$set_gem_home" "$set_node_path" "$set_cwd" \
+      "$use_all_null" "$use_err_null" "$use_out_null"
+
+      builtin print -r -- "#!/usr/bin/env zsh$nl$nl$REPLY$nl$nl$fnam \"\$@\"" >! "$file"
+      command chmod +x "$file"
+
+      if [[ -x $file ]]; then
+        if (( !OPTS[opt_-q,--quiet] )); then
+          if [[ $hook == atclone-<-> || $ZI[annex-multi-flag:pull-active] -ge 1 ]]; then
+            +zi-message "{annex}rust-annex{ehi}:{rst} ${${hook:#*atclone-<->}:+Re-}Created the {pname}${fnam}{rst} shim"
+          fi
+        fi
+      else
+        +zi-message "{annex}rust-annex{ehi}:{rst} {error}Something went wrong while creating the {pname}${fnam}{rst} shim"
+      fi
+    }
   }
 }

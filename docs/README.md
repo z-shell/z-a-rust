@@ -7,20 +7,17 @@
 
 ## **Wiki:** [z-a-rust](https://github.com/z-shell/zi/wiki/z-a-rust)
 
-An Annex that installs rust and cargo packages locally inside the
-plugin or snippet directories. The crate can then have a so called _shim_
-created (name borrowed from `rbenv`) – a script that's located in the standard
-`$PATH` entry "`$ZPFX/bin`" of following contents (example):
+An Annex that installs rust and cargo packages locally inside the plugin or snippet directories. The crate can then have a so called _shim_ created (name borrowed from `rbenv`) – a script that's located in the standard `$PATH` entry "`$ZPFX/bin`" of following contents (example):
 
-```zsh
+```shell
 #!/usr/bin/env zsh
 
 function lsd {
-	local bindir="/root/.zi/plugins/z-shell---null/bin"
-	local -x PATH="/root/.zi/plugins/z-shell---null"/bin:"$PATH" # -x means export
-	local -x RUSTUP_HOME="/root/.zi/plugins/z-shell---null"/rustup CARGO_HOME="/root/.zi/plugins/z-shell---null"
+  local bindir="/root/.zi/plugins/z-shell---null/bin"
+  local -x PATH="/root/.zi/plugins/z-shell---null"/bin:"$PATH" # -x means export
+  local -x RUSTUP_HOME="/root/.zi/plugins/z-shell---null"/rustup CARGO_HOME="/root/.zi/plugins/z-shell---null"
 
-	"$bindir"/"lsd" "$@"
+  "$bindir"/"lsd" "$@"
 }
 
 lsd "$@"

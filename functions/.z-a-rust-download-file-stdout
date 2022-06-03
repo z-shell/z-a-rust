@@ -1,0 +1,47 @@
+# -*- mode: zsh; sh-indentation: 2; indent-tabs-mode: nil; sh-basic-offset: 2; -*-
+# vim: ft=zsh sw=2 ts=2 et
+#
+# Copyright (c) 2021 Z-Shell Community
+#
+# FUNCTION: .z-a-rust-download-file-stdout [[[
+# Downloads file to stdout. Supports following backend commands:
+# curl, wget, lftp, lynx. Used by snippet loading.
+
+.z-a-rust-download-file-stdout() {
+  local url="$1" restart="$2"
+
+  builtin setopt localoptions localtraps
+
+  if (( restart )); then
+    (( ${path[(I)/usr/local/bin]} )) || \
+      {
+        path+=( "/usr/local/bin" );
+        trap "path[-1]=()" EXIT
+      }
+
+    if (( ${+commands[curl]} )) then
+      command curl -fsSL "$url" || return 1
+    elif (( ${+commands[wget]} )); then
+      command wget -q "$url" -O - || return 1
+    elif (( ${+commands[lftp]} )); then
+      command lftp -c "cat $url" || return 1
+    elif (( ${+commands[lynx]} )) then
+      command lynx -source "$url" || return 1
+    else
+      return 2
+    fi
+  else
+    if type curl 2>/dev/null 1>&2; then
+      command curl -fsSL "$url" || return 1
+    elif type wget 2>/dev/null 1>&2; then
+      command wget -q "$url" -O - || return 1
+    elif type lftp 2>/dev/null 1>&2; then
+      command lftp -c "cat $url" || return 1
+    else
+      .z-a-rust-download-file-stdout "$url" "1"
+      return $?
+    fi
+  fi
+
+  return 0
+} # ]]]

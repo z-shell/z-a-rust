@@ -1,0 +1,18 @@
+---
+name: '⭕ Trunk'
+on:
+  push:
+    branches: ['main']
+    tags: ['v*.*.*']
+  pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch: {}
+
+jobs:
+  check-call:
+    name: '⚡'
+    uses: z-shell/.github/.github/workflows/trunk-call.yml@main
+    with:
+      runs-on: 'ubuntu-latest'
+      node_version: '16'
+      pnpm_arguments: 'pnpm i'

@@ -3,54 +3,57 @@
 #
 # Copyright (c) 2021 Z-Shell Community
 
-emulate -RL zsh
-setopt extendedglob warncreateglobal typesetsilent noshortloops
+→za-rust-atdelete-handler() {
 
-[[ "$1" = plugin ]] && \
-    local type="$1" user="$2" plugin="$3" id_as="$4" dir="$5" hook="$6" || \
-    local type="$1" url="$2" id_as="$3" dir="$4" hook="$5"
+  builtin emulate -RL zsh ${=${options[xtrace]:#off}:+-o xtrace}
+  builtin setopt extendedglob warncreateglobal typesetsilent noshortloops
 
-local nl=$'\n'
+  [[ "$1" = plugin ]] && \
+  local type="$1" user="$2" plugin="$3" id_as="$4" dir="$5" hook="$6" || \
+  local type="$1" url="$2" id_as="$3" dir="$4" hook="$5"
 
-if [[ -n "${ICE[cargo]}" ]] {
+  local nl=$'\n'
+
+  if [[ -n "${ICE[cargo]}" ]] {
     local -a cargos bin_pkg_dst tmpsdst
     cargos=( "${(s.;.)ICE[cargo]}" )
 
     local cargo
 
     for cargo ( $cargos ) {
-        bin_pkg_dst=( ${(@s.->.)cargo} )
-        bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
-        tmpsdst=( ${(@s.<-.)bin_pkg_dst[1]} )
-        tmpsdst=( "${tmpsdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
-        if (( ${#tmpsdst} > 1 )); then
-            bin_pkg_dst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${bin_pkg_dst[2]:-${tmpdist[2]#\!}}" )
-        else
-            bin_pkg_dst=( "${tmpsdst[1]#\!}" "${tmpsdst[1]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
-        fi
-        bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
-        if [[ ${bin_pkg_dst[2]} = \!* ]]; then
-            bin_pkg_dst[2]=${bin_pkg_dst[2]#\!}
-            bin_pkg_dst[1]=${bin_pkg_dst[1]##[a-zA-Z]##:}
-            bin_pkg_dst[2]=${bin_pkg_dst[2]##[a-zA-Z]##:}
-            bin_pkg_dst[3]=${bin_pkg_dst[3]##[a-zA-Z]##:}
-        else
-            continue
-        fi
+      bin_pkg_dst=( ${(@s.->.)cargo} )
+      bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+      tmpsdst=( ${(@s.<-.)bin_pkg_dst[1]} )
+      tmpsdst=( "${tmpsdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+      if (( ${#tmpsdst} > 1 )); then
+        bin_pkg_dst=( "${tmpsdst[1]}" "${tmpsdst[2]}" "${bin_pkg_dst[2]:-${tmpdist[2]#\!}}" )
+      else
+        bin_pkg_dst=( "${tmpsdst[1]#\!}" "${tmpsdst[1]}" "${bin_pkg_dst[2]:-${bin_pkg_dst[1]#\!}}" )
+      fi
+      bin_pkg_dst=( "${bin_pkg_dst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+      if [[ ${bin_pkg_dst[2]} = \!* ]]; then
+        bin_pkg_dst[2]=${bin_pkg_dst[2]#\!}
+        bin_pkg_dst[1]=${bin_pkg_dst[1]##[a-zA-Z]##:}
+        bin_pkg_dst[2]=${bin_pkg_dst[2]##[a-zA-Z]##:}
+        bin_pkg_dst[3]=${bin_pkg_dst[3]##[a-zA-Z]##:}
+      else
+        continue
+      fi
 
-        local target_binary="${${(M)bin_pkg_dst[1]:#/*}:-$dir/bin/${bin_pkg_dst[1]}}" \
-            fnam="${bin_pkg_dst[3]:-${bin_pkg_dst[1]:t}}"
-        local file="$ZPFX/bin/$fnam"
+      local target_binary="${${(M)bin_pkg_dst[1]:#/*}:-$dir/bin/${bin_pkg_dst[1]}}" \
+        fnam="${bin_pkg_dst[3]:-${bin_pkg_dst[1]:t}}"
+      local file="$ZPFX/bin/$fnam"
 
+      if [[ -f $file ]]; then
+        command rm -f "$file"
         if [[ -f $file ]]; then
-            command rm -f "$file"
-            if [[ -f $file ]]; then
-              +zi-message "{annex}rust-annex{ehi}:{rst} {error}Could not remove the {pname}${fnam}{error} shim from {var}\$ZPFX/bin{error}, verify the permissions{rst}"
-            else
-              +zi-message "{annex}rust-annex{ehi}:{rst} Correctly removed the {pname}${fnam}{rst} shim from {var}\$ZPFX/bin{rst}" || \
-            fi
+          +zi-message "{annex}rust-annex{ehi}:{rst} {error}Could not remove the {pname}${fnam}{error} shim from {var}\$ZPFX/bin{error}, verify the permissions{rst}"
         else
-          +zi-message "{annex}rust-annex{ehi}:{rst} {error}The {pname}${fnam}{error} shim did not exist in {var}\$ZPFX/bin{error} or is not a regular file{rst}"
+          +zi-message "{annex}rust-annex{ehi}:{rst} Correctly removed the {pname}${fnam}{rst} shim from {var}\$ZPFX/bin{rst}" || \
         fi
+      else
+        +zi-message "{annex}rust-annex{ehi}:{rst} {error}The {pname}${fnam}{error} shim did not exist in {var}\$ZPFX/bin{error} or is not a regular file{rst}"
+      fi
     }
+  }
 }

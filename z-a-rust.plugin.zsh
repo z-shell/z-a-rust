@@ -14,13 +14,13 @@ if [[ $PMSPEC != *f* ]] {
 }
 
 # https://z.digitalclouds.dev/community/zsh_plugin_standard/#the-proposed-function-name-prefixes
-autoload .za-rust-bin-or-src-function-body \
+autoload -Uz .za-rust-bin-or-src-function-body .z-a-rust-download-file-stdout \
 →za-rust-atload-handler →za-rust-atclone-handler \
 →za-rust-atpull-handler →za-rust-help-handler \
 →za-rust-atdelete-handler
 
 # An empty stub to fill the help handler fields
-→za-rust-help-null-handler() { :; }
+→za-rust-null-handler() { :; }
 
 @zi-register-annex "z-a-rust" hook:atload-40 \
   →za-rust-atload-handler \
@@ -28,12 +28,12 @@ autoload .za-rust-bin-or-src-function-body \
 
 @zi-register-annex "z-a-rust" hook:atclone-40 \
   →za-rust-atclone-handler \
-  →za-rust-help-null-handler
+  →za-rust-null-handler
 
 @zi-register-annex "z-a-rust" hook:\%atpull-40 \
   →za-rust-atclone-handler \
-  →za-rust-help-null-handler
+  →za-rust-null-handler
 
 @zi-register-annex "z-a-rust" hook:atdelete-40 \
   →za-rust-atdelete-handler \
-  →za-rust-help-null-handler
+  →za-rust-null-handler
