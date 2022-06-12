@@ -7,7 +7,7 @@
   <!--  <p><img align="center" src="https://raw.githubusercontent.com/z-shell/z-a-meta-plugins/main/docs/images/fuzzy-mplg-ex.png" alt="zi annex meta-plugins" width="100%" height="auto" /></p> -->
 </td></tr></table></div><hr />
 
-## 💡 Wiki: [meta-plugins](https://z.digitalclouds.dev/ecosystem/annexes/rust) - [annexes](https://z.digitalclouds.dev/ecosystem/annexes)
+## 💡 Wiki: [rust](https://z.digitalclouds.dev/ecosystem/annexes/rust) - [annexes](https://z.digitalclouds.dev/ecosystem/annexes)
 
 ## Install
 
