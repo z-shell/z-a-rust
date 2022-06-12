@@ -1,31 +1,15 @@
-<h2 align="center">
+<div align="center"><table><tr><td>
+<h1 align="center">
   <a href="https://github.com/z-shell/zi">
-    <img src="https://github.com/z-shell/zi/raw/main/docs/images/logo.svg" alt="Logo" width="80" height="80" />
-  </a>
-❮ ZI ❯ Annex -Rust
-</h2>
+    <img align="center" src="https://github.com/z-shell/zi/raw/main/docs/images/logo.svg" alt="Logo" width="60px" height="60px" />
+  </a> ❮ ZI ❯ Annex -Rust </h1>
+  <h2><p> An Annex that installs rust and cargo packages locally inside the plugin or snippet directories </p></h2>
+  <!--  <p><img align="center" src="https://raw.githubusercontent.com/z-shell/z-a-meta-plugins/main/docs/images/fuzzy-mplg-ex.png" alt="zi annex meta-plugins" width="100%" height="auto" /></p> -->
+</td></tr></table></div><hr />
 
-## **Wiki:** [z-a-rust](https://github.com/z-shell/zi/wiki/z-a-rust)
+## 💡 Wiki: [meta-plugins](https://z.digitalclouds.dev/ecosystem/annexes/rust) - [annexes](https://z.digitalclouds.dev/ecosystem/annexes)
 
-An Annex that installs rust and cargo packages locally inside the plugin or snippet directories. The crate can then have a so called _shim_ created (name borrowed from `rbenv`) – a script that's located in the standard `$PATH` entry "`$ZPFX/bin`" of following contents (example):
-
-```shell
-#!/usr/bin/env zsh
-
-function lsd {
-  local bindir="/root/.zi/plugins/z-shell---null/bin"
-  local -x PATH="/root/.zi/plugins/z-shell---null"/bin:"$PATH" # -x means export
-  local -x RUSTUP_HOME="/root/.zi/plugins/z-shell---null"/rustup CARGO_HOME="/root/.zi/plugins/z-shell---null"
-
-  "$bindir"/"lsd" "$@"
-}
-
-lsd "$@"
-```
-
-As it can be seen shim ultimately provides the binary to the command line.
-
-## Installation
+## Install
 
 Simply load like a regular plugin, i.e.:
 
@@ -34,3 +18,7 @@ zi light z-shell/z-a-rust
 ```
 
 This installs the annex and makes the `rustup` and `cargo''` ices available.
+
+---
+
+This repository compatible with [ZI](https://github.com/z-shell/zi)
