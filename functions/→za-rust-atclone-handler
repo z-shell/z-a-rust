@@ -44,7 +44,7 @@
         local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup"
         if (( !OPTS[opt_-q,--quiet] )) {
           +zi-message "{annex}rust-annex{ehi}:{rst} Running the rustup installer…{rst}"
-          bin/rustup-init -y --no-modify-path |& command egrep '(installing|installed)'
+          bin/rustup-init -y --no-modify-path |& command grep -E '(installing|installed)'
           bin/rustup component remove rust-docs
         } else {
           bin/rustup-init -y --no-modify-path &> /dev/null
@@ -60,7 +60,7 @@
         local -x CARGO_HOME="$dir" RUSTUP_HOME="$dir/rustup" PATH="$dir/bin:$PATH"
         if (( !OPTS[opt_-q,--quiet] )) {
           +zi-message "{annex}rust-annex{ehi}:{rst} Running \`rustup update'…{rst}"
-          command rustup update |& command egrep -i '(error|warning|installing|info: latest update )'
+          command rustup update |& command grep -E -i '(error|warning|installing|info: latest update )'
         } else {
           command rustup update &> /dev/null
         }
