@@ -1,10 +1,9 @@
-#autoload
 # -*- mode: zsh; sh-indentation: 2; indent-tabs-mode: nil; sh-basic-offset: 2; -*-
 # vim: ft=zsh sw=2 ts=2 et
 #
 # Copyright (c) 2021 Z-Shell Community
-
-→za-rust-atdelete-handler() {
+#
+# FUNCTION: .za-rust-atdelete-handler [[[
 
   builtin emulate -RL zsh ${=${options[xtrace]:#off}:+-o xtrace}
   builtin setopt extendedglob warncreateglobal typesetsilent noshortloops
@@ -57,4 +56,3 @@
       fi
     }
   }
-}

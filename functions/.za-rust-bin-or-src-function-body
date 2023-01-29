@@ -6,8 +6,6 @@
 # FUNCTION: .za-bgn-bin-or-src-function-body
 # Returns the body of the function wrapping a binary
 
-.za-rust-bin-or-src-function-body() {
-
   local name="$2" bin="$3" dir="$4"
   integer run_type="$1" set_rust_home_vars="$5" \
   set_gem_home="$6" set_node_path="$7" set_cwd="$8" \
@@ -40,4 +38,3 @@
   REPLY+="$nl"
   REPLY+="${${(M)set_cwd:#1}:+"$nl$tab() { setopt localoptions noautopushd; builtin cd -q \"\$oldpwd\"; }"}
   }"
-}

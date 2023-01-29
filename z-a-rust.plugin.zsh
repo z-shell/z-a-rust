@@ -9,31 +9,28 @@
 0="${${(M)0:#/*}:-$PWD/$0}"
 
 # https://wiki.zshell.dev/community/zsh_plugin_standard/#funtions-directory
-if [[ $PMSPEC != *f* ]] {
+if [[ $PMSPEC != *f* ]]; then
   fpath+=( "${0:h}/functions" )
-}
+fi
 
 # https://wiki.zshell.dev/community/zsh_plugin_standard/#the-proposed-function-name-prefixes
-autoload -Uz .za-rust-bin-or-src-function-body .z-a-rust-download-file-stdout \
-→za-rust-atload-handler →za-rust-atclone-handler \
-→za-rust-atpull-handler →za-rust-help-handler \
-→za-rust-atdelete-handler
+autoload -Uz .za-rust-{bin-or-src-function-body,download-file-stdout,{atload,atclone,atpull,atdelete,help}-handler}
 
 # An empty stub to fill the help handler fields
-→za-rust-null-handler() { :; }
+.za-rust-null-handler() { :; }
 
 @zi-register-annex "z-a-rust" hook:atload-40 \
-  →za-rust-atload-handler \
-  →za-rust-help-handler "rustup|cargo''" # also register new ices
+  .za-rust-atload-handler \
+  .za-rust-help-handler "rustup|cargo''" # also register new ices
 
 @zi-register-annex "z-a-rust" hook:atclone-40 \
-  →za-rust-atclone-handler \
-  →za-rust-null-handler
+  .za-rust-atclone-handler \
+  .za-rust-null-handler
 
 @zi-register-annex "z-a-rust" hook:\%atpull-40 \
-  →za-rust-atclone-handler \
-  →za-rust-null-handler
+  .za-rust-atclone-handler \
+  .za-rust-null-handler
 
 @zi-register-annex "z-a-rust" hook:atdelete-40 \
-  →za-rust-atdelete-handler \
-  →za-rust-null-handler
+  .za-rust-atdelete-handler \
+  .za-rust-null-handler

@@ -1,10 +1,7 @@
-#autoload
 # -*- mode: zsh; sh-indentation: 2; indent-tabs-mode: nil; sh-basic-offset: 2; -*-
 # vim: ft=zsh sw=2 ts=2 et
 #
 # Copyright (c) 2021 Z-Shell Community
-
-→za-rust-atclone-handler() {
 
   builtin emulate -RL zsh ${=${options[xtrace]:#off}:+-o xtrace}
   builtin setopt extendedglob warncreateglobal typesetsilent noshortloops
@@ -32,9 +29,9 @@
           return 1
         }
         command mkdir -p bin rustup
-        .z-a-rust-download-file-stdout 'https://sh.rustup.rs' 0 >! bin/rustup-init || \
+        .za-rust-download-file-stdout 'https://sh.rustup.rs' 0 >! bin/rustup-init || \
         {
-          .z-a-rust-download-file-stdout 'https://sh.rustup.rs' 1 >! bin/rustup-init || \
+          .za-rust-download-file-stdout 'https://sh.rustup.rs' 1 >! bin/rustup-init || \
           {
             +zi-message "{annex}rust-annex{ehi}:{rst} {error}Could not download the {pname}rustup.rs{error} installer{rst}"
             return 0
@@ -184,4 +181,3 @@
       fi
     }
   }
-}

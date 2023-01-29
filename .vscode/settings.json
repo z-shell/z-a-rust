@@ -1,6 +1,6 @@
 {
-  "conventionalCommits.scopes": ["workspace"],
-  "markdownlint.config": {
-    "extends": ".github/.markdownlint.yaml"
-  }
+  "files.associations": {
+    "*za-*": "zsh"
+  },
+  "shellformat.useEditorConfig": true
 }

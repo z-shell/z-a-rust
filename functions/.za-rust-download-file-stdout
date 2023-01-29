@@ -3,13 +3,11 @@
 #
 # Copyright (c) 2021 Z-Shell Community
 #
-# FUNCTION: .z-a-rust-download-file-stdout [[[
+# FUNCTION: .za-rust-download-file-stdout [[[
 # Downloads file to stdout. Supports following backend commands:
 # curl, wget, lftp, lynx. Used by snippet loading.
 
-.z-a-rust-download-file-stdout() {
   local url="$1" restart="$2"
-
   builtin setopt localoptions localtraps
 
   if (( restart )); then
@@ -38,10 +36,9 @@
     elif type lftp 2>/dev/null 1>&2; then
       command lftp -c "cat $url" || return 1
     else
-      .z-a-rust-download-file-stdout "$url" "1"
+      .za-rust-download-file-stdout "$url" "1"
       return $?
     fi
   fi
 
   return 0
-} # ]]]
